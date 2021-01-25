@@ -1,7 +1,7 @@
 # User Account
 
 | Commands      | Endpoint  | Method  | Path Param(s)
-| ------------- |:-------------:| -----:| -----:|
+| ------------- |---------------| ------| ------|
 | Create account | `/accounts` | POST |  |
 | Update account | `/accounts/{username}` | PUT | username |
 | Delete account | `/accounts/{username}` | DELETE | username |
@@ -11,36 +11,9 @@
 
 # User Queries
 | Commands      | Endpoint  | Method  | Path Param(s)
-| ------------- |:-------------:| -----:| -----:|
+| ------------- |---------------| ------| ------|
 | Get all accounts | `/accounts` | GET |  |
 | Get specific account | `/accounts/{username}` | GET | username |
-
-# Items
-| Commands      | Endpoint  | Method  | Path Param(s)
-| ------------- |:-------------:| -----:| -----:|
-| Create Item | `/items` | POST |  |
-| Update Item | `/items/{id}` | PUT | item id |
-| Delete Item | `/items/{id}` | DELETE | item id |
-
-# Items Queries
-| Commands      | Endpoint  | Method  | Path Param(s)
-| ------------- |:-------------:| -----:| -----:|
-| Get all items | `/items` | GET |  |
-| Get specific item | `/items/{id}` | GET | id of item |
-
-# Orders
-| Commands      | Endpoint  | Method  | Path Param(s)
-| ------------- |:-------------:| -----:| -----:|
-| Create Order | `/orders` | POST |  |
-| Update Order | `/orders/{id}` | PUT | order id |
-| Delete Order | `/orders/{id}` | DELETE | order id |
-
-# Orders Queries
-| Commands      | Endpoint  | Method  | Path Param(s)
-| ------------- |:-------------:| -----:| -----:|
-| Get all orders | `/orders` | GET |  |
-| Get specific order | `/orders/{id}` | GET | order id |
-
 
 ```
 //Set account info
@@ -64,7 +37,37 @@
     "orderHistory": "array",
     "totalRevenue": "number"
 }
+
+//set guest info
+{
+    "email": "string",
+    "phone": "number"
+}
  
+//get guest info
+{
+    "id": "string",
+    "email": "string",
+    "phone": "number",
+    "orderHistory": "array",
+    "totalRevenua": "number"
+}
+```
+
+# Items
+| Commands      | Endpoint  | Method  | Path Param(s)
+| ------------- |---------------| ------| ------|
+| Create Item | `/items` | POST |  |
+| Update Item | `/items/{id}` | PUT | item id |
+| Delete Item | `/items/{id}` | DELETE | item id |
+
+# Items Queries
+| Commands      | Endpoint  | Method  | Path Param(s)
+| ------------- |---------------| ------| ------|
+| Get all items | `/items` | GET |  |
+| Get specific item | `/items/{id}` | GET | id of item |
+
+``` 
 //set item info
 {
     "price": "number",
@@ -80,6 +83,7 @@
  
 //get item info
 {
+    "id: "string"
     "name": "string",
     "price": "number",
     "category": "string",
@@ -90,31 +94,45 @@
     "promotionalFlag": "boolean",
     "promotionalprice": "number"
 }
- 
-//set guest info
+```
+
+# Orders
+| Commands      | Endpoint  | Method  | Path Param(s)
+| ------------- |---------------| ------| ------|
+| Create Order | `/orders` | POST |  |
+| Update Order | `/orders/{id}` | PUT | order id |
+| Delete Order | `/orders/{id}` | DELETE | order id |
+
+# Orders Queries
+| Commands      | Endpoint  | Method  | Path Param(s)
+| ------------- |-------------| -----| -----|
+| Get all orders | `/orders` | GET |  |
+| Get specific order | `/orders/{id}` | GET | order id |
+
+
+``` 
+// set order
 {
-    "email": "string",
-    "phone": "number"
-}
- 
-//get guest info
-{
-    "email": "string",
-    "phone": "number",
-    "orderHistory": "array",
-    "totalRevenua": "number"
+    "items": [
+        {
+            "qty": 1,
+            "size": "xxl",
+            "otheritemsinfo": {}
+        }
+    ],
+    "address": {
+        "street1": "string",
+        "street2":"",
+        "city": "string",
+        "state": "string",
+        "zip": "number"
+    },
+    "userId": "string",
+    "inPersonPickUp": "boolean"
 }
 
-"rates": [
-    {
-        "id":"",
-        "cost": 300,
-        "carrier": "",
-        "shippingTime": ""
-    }
-]
-
-"orders": {
+// get order
+{
     "id": "string",
     "price": "number",
     "dateCreated": "string",
@@ -139,4 +157,22 @@
     },
     "userId": "string"
 }
+```
+
+# Other data
+```
+// set rate 
+{
+    "id": "string"
+}
+
+// get rates
+"rates": [
+    {
+        "id":"",
+        "cost": 300,
+        "carrier": "",
+        "shippingTime": ""
+    }
+]
 ```
