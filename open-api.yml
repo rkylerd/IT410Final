@@ -30,22 +30,20 @@ paths:
       summary: "Add a new item to the store"
       description: ""
       operationId: "addItem"
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/Item"
       responses:
-        "405":
-          description: "Invalid input"
-    put:
-      tags:
-      - "item"
-      summary: "Update an existing item"
-      description: ""
-      operationId: "updateItem"
-      responses:
-        "400":
-          description: "Invalid ID supplied"
-        "404":
-          description: "Item not found"
-        "405":
-          description: "Validation exception"
+        "201":
+          description: "Successfully created item"
+        "500":
+          description: "Internal server error"
+        "403":
+          description: "User does not have permission to access this resource"
+        "401":
+          description: "Must authenticate"
   /order/findByStatus:
     get:
       tags:
@@ -102,7 +100,12 @@ paths:
       - "item"
       summary: "Updates a item in the store with form data"
       description: ""
-      operationId: "updateItemWithForm"
+      operationId: "updateItem"
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/Item"
       parameters:
       - name: "itemId"
         in: "path"
@@ -145,6 +148,11 @@ paths:
       summary: "uploads an image"
       description: ""
       operationId: "uploadFile"
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/Image"
       parameters:
       - name: "itemId"
         in: "path"
@@ -263,25 +271,17 @@ paths:
         default:
           description: "successful operation"
   /user/login:
-    get:
+    put:
       tags:
       - "user"
       summary: "Logs user into the system"
       description: ""
       operationId: "loginUser"
-      parameters:
-      - name: "username"
-        in: "query"
-        description: "The user name for login"
-        required: true
-        schema:
-          type: "string"
-      - name: "password"
-        in: "query"
-        description: "The password for login in clear text"
-        required: true
-        schema:
-          type: "string"
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/User"
       responses:
         "200":
           description: "successful operation"
@@ -302,14 +302,20 @@ paths:
                 format: "date-time"
         "400":
           description: "Invalid username/password supplied"
-  /user/logout:
-    get:
+  /user/{username}/logout:
+    delete:
       tags:
       - "user"
       summary: "Logs out current logged in user session"
       description: ""
       operationId: "logoutUser"
-      parameters: []
+      parameters:
+      - name: username
+        in: path
+        required: true
+        description: the user identifier, as username 
+        schema:
+          type: string
       responses:
         default:
           description: "successful operation"
@@ -385,12 +391,30 @@ components:
         properties:
           id:
             type: integer
-          name:
+            readOnly: true
+          username:
             type: string
+          email:
+            type: string
+          password:
+            type: string
+            writeOnly: true
+          fname:
+            type: string
+          lname:
+            type: string
+          phone:
+            type: number
+          addresses:
+            type: array
+            items:    
+              allOf:
+                - $ref: '#/components/schemas/Address'
     Item:
         properties:
           id:
             type: integer
+            readOnly: true
           name:
             type: string
           price:
@@ -418,24 +442,30 @@ components:
       properties:
         id:
           type: integer
+          readOnly: true
         price:
           type: number
         dateCreated:
           type: string
+          readOnly: true
         inPersonPickup:
           type: boolean
         expectedArrivalDate:
           type: string
+          readOnly: true
         label:
           type: string
+          readOnly: true
         trackingId:
           type: string
+          readOnly: true
         items:
           type: array
           items:
             $ref: '#/components/schemas/Item'
         status:
           type: string
+          readOnly: true
         address:
           allOf:
             - $ref: '#/components/schemas/Address'
@@ -454,6 +484,15 @@ components:
           type: string
         zip:
           type: number
+    Image:
+      type: object
+      properties:
+        name:
+          type: string
+        base64:
+          type: string
+        type: 
+          type: string
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
