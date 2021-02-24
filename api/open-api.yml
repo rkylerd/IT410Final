@@ -30,6 +30,8 @@ paths:
       summary: "Add a new item to the store"
       description: ""
       operationId: "addItem"
+      x-controller: items
+      x-operation: addItem
       requestBody:
         content:
           'application/json':
@@ -44,31 +46,6 @@ paths:
           description: "User does not have permission to access this resource"
         "401":
           description: "Must authenticate"
-  /order/findByStatus:
-    get:
-      tags:
-      - "order"
-      summary: "Finds Orders by status"
-      description: "Multiple status values can be provided with comma separated strings"
-      operationId: "findOrdersByStatus"
-      parameters:
-      - name: "status"
-        in: "query"
-        description: "Status values that need to be considered for filter"
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                type: "array"
-                items:
-                  $ref: "#/components/schemas/Order"
-        "400":
-          description: "Invalid status value"
   /item/{itemId}:
     get:
       tags:
@@ -76,6 +53,8 @@ paths:
       summary: "Find item by ID"
       description: "Returns a single item"
       operationId: "getItemById"
+      x-controller: items
+      x-operation: getItemById
       parameters:
       - name: "itemId"
         in: "path"
@@ -101,6 +80,8 @@ paths:
       summary: "Updates a item in the store with form data"
       description: ""
       operationId: "updateItem"
+      x-controller: items
+      x-operation: updateItem
       requestBody:
         content:
           'application/json':
@@ -135,6 +116,8 @@ paths:
       summary: "Deletes a item"
       description: ""
       operationId: "deleteItem"
+      x-controller: items
+      x-operation: deleteItem
       parameters:
       - name: "api_key"
         in: "header"
@@ -169,7 +152,9 @@ paths:
       - "item"
       summary: "uploads an image"
       description: ""
-      operationId: "uploadFile"
+      operationId: "uploadImage"
+      x-controller: items
+      x-operation: uploadItemImage
       requestBody:
         content:
           'application/json':
@@ -192,13 +177,32 @@ paths:
                 type: string
         "500":
           description: "Internal Server Error"
-  /store/order:
+  /order:
+    get:
+      tags:
+      - "store"
+      summary: "Find purchase order by ID"
+      description: "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions"
+      operationId: "getOrders"
+      x-controller: orders
+      x-operation: getOrders
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:    
+                  $ref: '#/components/schemas/Order'
     post:
       tags:
       - "store"
       summary: "Place an order for a item"
       description: ""
       operationId: "placeOrder"
+      x-controller: orders
+      x-operation: createOrder
       requestBody:
         content:
           'application/json':
@@ -213,13 +217,15 @@ paths:
                 $ref: "#/components/schemas/Order"
         "400":
           description: "Invalid Order"
-  /store/order/{orderId}:
+  /order/{orderId}:
     get:
       tags:
       - "store"
       summary: "Find purchase order by ID"
       description: "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions"
       operationId: "getOrderById"
+      x-controller: orders
+      x-operation: getOrderById
       parameters:
       - name: "orderId"
         in: "path"
@@ -247,6 +253,8 @@ paths:
       summary: "Delete purchase order by ID"
       description: "For valid response try integer IDs with positive integer value.         Negative or non-integer values will generate API errors"
       operationId: "deleteOrder"
+      x-controller: orders
+      x-operation: deleteOrder
       parameters:
       - name: "orderId"
         in: "path"
@@ -271,6 +279,33 @@ paths:
                 properties:
                   message:
                     type: string
+  /order/findByStatus:
+    get:
+      tags:
+      - "order"
+      summary: "Finds Orders by status"
+      description: "Multiple status values can be provided with comma separated strings"
+      operationId: "findOrdersByStatus"
+      x-controller: items
+      x-operation: getOrdersByStatus
+      parameters:
+      - name: "status"
+        in: "query"
+        description: "Status values that need to be considered for filter"
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Order"
+        "400":
+          description: "Invalid status value"
   /user:
     post:
       tags:
@@ -278,6 +313,8 @@ paths:
       summary: "Create user"
       description: "This can only be done by the logged in user."
       operationId: "createUser"
+      x-controller: users
+      x-operation: createUser
       requestBody:
         content:
           'application/json':
@@ -290,6 +327,96 @@ paths:
           description: "internal server error"
         "422":
           description: "duplicate username or email"
+  /user/{username}:
+    get:
+      tags:
+      - "user"
+      summary: "Get user by user name"
+      description: ""
+      operationId: "getUserByName"
+      x-controller: users
+      x-operation: getUserByUsername
+      parameters:
+      - name: username
+        in: path
+        required: true
+        description: the user identifier, as username 
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: "Invalid username supplied"
+        "404":
+          description: "User not found"
+        "500": 
+          description: "Internal server error"
+    put:
+      tags:
+      - "user"
+      summary: "Updated user"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      x-controller: users
+      x-operation: updateUser
+      parameters:
+      - name: username
+        in: path
+        required: true
+        description: the user identifier, as username 
+        schema:
+          type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "400":
+          description: "Invalid user supplied"
+        "404":
+          description: "User not found"
+        "403": 
+          description: "User not authorized"
+        "401": 
+          description: "User not authenticated"
+        "204":
+          description: "Successful update of User"
+        "500":
+          description: "Internal server error"   
+    delete:
+      tags:
+      - "user"
+      summary: "Delete user"
+      description: "This can only be done by the logged in user."
+      operationId: "deleteUser"
+      x-controller: users
+      x-operation: deleteUser
+      parameters:
+      - name: username
+        in: path
+        required: true
+        description: the user identifier, as username 
+        schema:
+          type: string
+      responses:
+        "400":
+          description: "Invalid username supplied"
+        "404":
+          description: "User not found"
+        "500":
+          description: "Internal server error"
+        "204":
+          description: "user was deleted"
+        "403":
+          description: "Not authorized to delete user"
+        "401": 
+          description: "Must be logged in to perform action"
   /user/login:
     put:
       tags:
@@ -297,6 +424,8 @@ paths:
       summary: "Logs user into the system"
       description: ""
       operationId: "loginUser"
+      x-controller: users
+      x-operation: login
       requestBody:
         content:
           'application/json':
@@ -331,6 +460,8 @@ paths:
       summary: "Logs out current logged in user session"
       description: ""
       operationId: "logoutUser"
+      x-controller: users
+      x-operation: logout
       parameters:
       - name: username
         in: path
@@ -343,92 +474,7 @@ paths:
           description: "user logged out"
         "500":
           description: "Internal server error"
-  /user/{username}:
-    get:
-      tags:
-      - "user"
-      summary: "Get user by user name"
-      description: ""
-      operationId: "getUserByName"
-      parameters:
-      - name: username
-        in: path
-        required: true
-        description: the user identifier, as username 
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "400":
-          description: "Invalid username supplied"
-        "404":
-          description: "User not found"
-        "500": 
-          description: "Internal server error"
-    put:
-      tags:
-      - "user"
-      summary: "Updated user"
-      description: "This can only be done by the logged in user."
-      operationId: "updateUser"
-      parameters:
-      - name: username
-        in: path
-        required: true
-        description: the user identifier, as username 
-        schema:
-          type: string
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              $ref: "#/components/schemas/User"
-      responses:
-        "400":
-          description: "Invalid user supplied"
-        "404":
-          description: "User not found"
-        "403": 
-          description: "User not authorized"
-        "401": 
-          description: "User not authenticated"
-        "204":
-          description: "Successful update of User"
-        "500":
-          description: "Internal server error"
-        
-    delete:
-      tags:
-      - "user"
-      summary: "Delete user"
-      description: "This can only be done by the logged in user."
-      operationId: "deleteUser"
-      parameters:
-      - name: username
-        in: path
-        required: true
-        description: the user identifier, as username 
-        schema:
-          type: string
-      responses:
-        "400":
-          description: "Invalid username supplied"
-        "404":
-          description: "User not found"
-        "500":
-          description: "Internal server error"
-        "204":
-          description: "user was deleted"
-        "403":
-          description: "Not authorized to delete user"
-        "401": 
-          description: "Must be logged in to perform action"
-components:
+  components:
   schemas:
     User:
         properties:
