@@ -21,8 +21,7 @@ app.use(express.json())
 
 // connect to the database
 const connection = `mongodb://${env.DB_UNAME}:${env.DB_PWD}@127.0.0.1:27017/${env.DB_NAME}`;
-  console.log(`${`DB_UNAME=${env.DB_UNAME}, DB_PWD=${env.DB_PWD}, DB_NAME=${env.DB_NAME}`}`);
-  mongoose.connect(connection, {
+mongoose.connect(connection, {
     useNewUrlParser: true, 
     useUnifiedTopology: true
   })
@@ -30,6 +29,7 @@ const connection = `mongodb://${env.DB_UNAME}:${env.DB_PWD}@127.0.0.1:27017/${en
   .catch(err => {
     console.log(`Could not connect to ${`DB_UNAME=${env.DB_UNAME}, DB_PWD=${env.DB_PWD}, DB_NAME=${env.DB_NAME}`}`);
     console.log(err)
+    process.exit(-1);
   });
   
 
@@ -44,7 +44,7 @@ enforcerMiddleware.on('error', (err: Error) => {
 }) 
 
 const dependencies = {
-  common: [ auth ]
+  common: [ auth, mongoose ]
 };
 const controllersPath = path.resolve(__dirname, 'controllers')
 app.use(enforcerMiddleware.route(controllersPath, dependencies))
