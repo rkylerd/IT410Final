@@ -1,12 +1,12 @@
 import { Request, Response } from 'express'
 import User from '../models/Users'
 
-const users:Array<User> = [];
+const users: Array<User> = [];
 
-export default function () {
+export default function ({ verifyToken, generateToken } : {verifyToken: Function, generateToken: Function }) {
   return {
     async createUser (req: Request, res: Response) {
-        users.push(req.body);
+        users.push(req.enforcer.body);
         res.sendStatus(200);
     },
     async getUsers (req: Request, res: Response) {
@@ -14,7 +14,7 @@ export default function () {
     },
     async getUserById (req: Request, res: Response) {
         console.log('req', req);
-        const orderId = req.enforcer.params.orderId || 2;
+        const orderId = req.enforcer.params.orderId;
         const order = users.find(({id = ""}) => {
             console.log(id, orderId);
             return id === `${orderId}`

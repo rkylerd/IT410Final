@@ -1,7 +1,5 @@
 import { Request, Response } from 'express'
-// import auth from '../auth.ts'
-// auth.verifyToken
-// const token = auth.generateToken({'name': "my name"});
+
 export default function() {
     return {
         async createItem (req: Request, res: Response) {
@@ -37,7 +35,7 @@ export default function() {
         },
         async getItemById (req: Request, res: Response) {
             try {
-                if (req.params.id === '1') {
+                if (req.enforcer.params.id === '1') {
                     return res.status(200).send({item1: 'cap1'});
                 }
                 return res.status(404).send();
@@ -48,7 +46,7 @@ export default function() {
         },
         async deleteItem (req: Request, res: Response) {
             try {
-                if (req.params.id === '1') {
+                if (req.enforcer.params.id === '1') {
                     return res.sendStatus(200);
                 }
                 return res.sendStatus(404);
@@ -59,7 +57,7 @@ export default function() {
         },
         async updateItem (req: Request, res: Response) {
             try {
-                if (req.params.id === '1') {
+                if (req.enforcer.params.id === '1') {
                     return res.status(200).send({message: "updated"});
                 }
                 else {

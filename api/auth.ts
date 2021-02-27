@@ -32,7 +32,7 @@ const verifyToken = (req: any, res: any, next: any) => {
 };
 
 
-module.exports = {
+export default {
     generateToken,
     verifyToken
-}
+};
