@@ -25,10 +25,9 @@ export default function (auth:any, mongoose:any) {
             await newOrder.save();
             res.sendStatus(200);
         } catch(err) {
-            console.log('ERROR---getOrders', err);
+            console.log('ERROR---createOrder', err);
             res.sendStatus(500);
         }
-        
     },
     async getOrders (req: Request, res: Response) {
         try {
@@ -60,7 +59,6 @@ export default function (auth:any, mongoose:any) {
             console.log('ERROR---deleteOrder', err);
             res.sendStatus(500);
         }
-        
     },
   }
 }
