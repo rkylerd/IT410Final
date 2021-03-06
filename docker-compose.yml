@@ -1,0 +1,30 @@
+version: '3.8'
+
+# volumes:
+#   mongo-volume:
+
+services:
+
+  mongo-express:
+    image: mongo-express
+    environment:
+      # - ME_CONFIG_OPTIONS_EDITORTHEME=ambiance
+      - ME_CONFIG_MONGODB_SERVER=db
+      - ME_CONFIG_BASICAUTH_USERNAME=caps-secret-admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=caps-secret-admin-pwd
+    ports:
+      - '8081:8081'
+
+  db:
+    image: 'mongo'
+    restart: always
+    container_name: mongo-caps
+    environment:
+      - MONGO_INITDB_DATABASE=caps-store
+      - MONGO_INITDB_ROOT_USERNAME=caps-secret-admin
+      - MONGO_INITDB_ROOT_PASSWORD=caps-secret-admin-pwd
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init.mongo.js:ro
+    #   - ./mongo-volume:/data/db
+    ports:
+      - '27017:27017'

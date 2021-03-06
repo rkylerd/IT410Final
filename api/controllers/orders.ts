@@ -1,54 +1,66 @@
 import { Request, Response } from 'express'
-const orders = [
-    {
-        "id": "1",
-        "price": 23.90,
-        "dateCreated": "now()",
-        "inPersonPickUp": false,
-        "expectedArrivalDate": "tomorrow",
-        "label": "...",
-        "trackingId": "789789",
-        "items": [
-            {
-                "qty": 1,
-                "size": "xxl",
-                "otheritemsinfo": {}
-            }
-        ],
-        "status": "string",
-        "address": {
-            "street1": "786 nubt lane",
-            "street2":"",
-            "city": "provo",
-            "state": "az",
-            "zip": "89122"
-        },
-        "userId": "234324"
-    }
-];
+import Error from '../models/Error'
 
-export default function () {
+export default function (auth:any, mongoose:any) {
+    const orderSchema = new mongoose.Schema({
+        price: Number,
+        dateCreated: String,
+        inPersonPickup: Boolean,
+        expectedArrivalDate: String,
+        label: String,
+        trackingId: String,
+        items: Array,
+        status: String,
+        address: Object,
+        userid: String
+    });
+
+    const Order = mongoose.model('Order', orderSchema);
   return {
     async createOrder (req: Request, res: Response) {
-        orders.push(req.body);
-        res.sendStatus(200);
+        try {
+            const newOrder = new Order({
+                    ...req.enforcer.body
+                });
+            await newOrder.save();
+            res.sendStatus(200);
+        } catch(err) {
+            console.log('ERROR---getOrders', err);
+            res.sendStatus(500);
+        }
+        
     },
     async getOrders (req: Request, res: Response) {
-        res.status(200).send(orders);
+        try {
+            res.status(200).send(await Order.find());
+        } catch(err) {
+            console.log('ERROR---getOrders', err);
+            res.sendStatus(500);
+        }
     },
     async getOrderById (req: Request, res: Response) {
-        console.log('req', req);
-        const orderId = req.enforcer.params.orderId || 2;
-        const order = orders.find(({id = ""}) => {
-            console.log(id, orderId);
-            return id === `${orderId}`
-        });
-        res.status(order ? 200 : 404).send(
-            order
-        );
+        try {
+            const orderId = req.enforcer.params.orderId;
+            const order = await Order.findOne({_id: orderId});
+            if (order) {
+                res.status(200).send(order);
+            }
+            res.status(404).send(new Error(`Order with id '${orderId}' not found.`, 404));
+        } catch(err) {
+            console.log('ERROR---getOrderById', err);
+            res.sendStatus(500);
+        }
     },
     async deleteOrder (req: Request, res: Response) {
-        res.status(204).send();
+        try {
+            const orderId = req.enforcer.params.orderId;
+            await Order.deleteOne({_id: orderId});
+            res.sendStatus(204);
+        } catch(err) {
+            console.log('ERROR---deleteOrder', err);
+            res.sendStatus(500);
+        }
+        
     },
   }
 }
