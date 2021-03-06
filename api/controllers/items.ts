@@ -1,13 +1,30 @@
 import { Request, Response } from 'express'
+import Error from '../models/Error'
 
-export default function() {
+export default function(auth:any, mongoose:any) {
+    const itemSchema = new mongoose.Schema({
+        name: String,
+        price: Number,
+        category: String,
+        description: String, 
+        imageUrl: String,
+        stock: String,
+        sizes: [],
+        promotionalFlag: Boolean,
+        promotionalPrice: Number
+    });
+    const Item = mongoose.model('Item', itemSchema);
     return {
         async createItem (req: Request, res: Response) {
             try {
-                return res.sendStatus(201);        
-            } catch (err) {
-                console.log(err);
-                return res.sendStatus(500);
+                const newItem = new Item({
+                        ...req.enforcer.body
+                    });
+                await newItem.save();
+                res.status(201).send(newItem);
+            } catch(err) {
+                console.log('ERROR---createItem', err);
+                res.sendStatus(500);
             }
         },
         async uploadImage (req: Request, res: Response) {
@@ -20,52 +37,50 @@ export default function() {
         },
         async getItems (req: Request, res: Response) {
             try {
-                return res.status(200).send([{
-                    item1: "cap1",
-                    item2: "cap2",
-                    item3: "cap3",
-                    item4: "cap4",
-                    item5: "cap5",
-                    item6: "cap6"
-                }])
-            } catch (err) {
-                console.log(err);
-                return res.sendStatus(500);
+                res.status(200).send(await Item.find());
+            } catch(err) {
+                console.log('ERROR---getItems', err);
+                res.sendStatus(500);
             }
         },
         async getItemById (req: Request, res: Response) {
             try {
-                if (req.enforcer.params.id === '1') {
-                    return res.status(200).send({item1: 'cap1'});
+                const itemId = req.enforcer.params.itemId;
+                const item = await Item.findOne({_id: itemId});
+                if (item) {
+                    res.status(200).send(item);
                 }
-                return res.status(404).send();
-            } catch (err) {
-                console.log(err);
-                return res.sendStatus(500);
+                res.status(404).send(new Error(`Item with id '${itemId}' not found.`, 404));
+            } catch(err) {
+                console.log('ERROR---getItemById', err);
+                res.sendStatus(500);
             }
         },
         async deleteItem (req: Request, res: Response) {
             try {
-                if (req.enforcer.params.id === '1') {
-                    return res.sendStatus(200);
-                }
-                return res.sendStatus(404);
-            } catch (err) {
-                console.log(err);
-                return res.sendStatus(500);
+                const itemId = req.enforcer.params.itemId;
+                await Item.deleteOne({_id: itemId});
+                res.sendStatus(204);
+            } catch(err) {
+                console.log('ERROR---deleteItem', err);
+                res.sendStatus(500);
             }
         },
         async updateItem (req: Request, res: Response) {
             try {
-                if (req.enforcer.params.id === '1') {
-                    return res.status(200).send({message: "updated"});
+                const itemId = req.enforcer.params.itemId;
+                const updatedItem = {...req.enforcer.body, _id: req.enforcer.params.itemId };
+                
+                const item = await Item.findOne({_id: itemId});
+                if (item) {
+                    item
+                    res.status(200).send(item);
+
                 }
-                else {
-                    return res.sendStatus(404);
-                }
-            } catch (err) {
-                console.log(err);
-                return res.sendStatus(500);
+                res.status(404).send(new Error(`Item with id '${itemId}' not found.`, 404));
+            } catch(err) {
+                console.log('ERROR---getItemById', err);
+                res.sendStatus(500);
             }
         }
     }

@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <div>
-      <cap-list />
       <Logo />
       <h1 class="title">
         caps
@@ -21,7 +20,7 @@
           rel="noopener noreferrer"
           class="button--grey"
         >
-          GitHub 
+          GitHub
         </a>
       </div>
     </div>
@@ -29,15 +28,11 @@
 </template>
 
 <script>
-  import CapList from '../components/caps/CapList.vue';
   export default {
     // async asyncData({ params, $http }) {
     //   const post = await $http.$get(`https://api.nuxtjs.dev/posts/${params.id}`)
     //   return { post }
     // }
-    components: {
-      CapList,
-    }
   }
 </script>
 

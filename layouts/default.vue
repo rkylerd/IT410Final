@@ -1,8 +1,24 @@
 <template>
   <div>
+    <Header />
+    <Banner/>
     <Nuxt />
+    <Footer />
   </div>
 </template>
+
+<script>
+import Header from "../components/shared/Header.vue";
+import Footer from "../components/shared/Footer.vue";
+import Banner from '../components/shared/Banner.vue';
+export default {
+  components: {
+    Header,
+    Footer,
+    Banner,
+  }
+}
+</script>
 
 <style>
 html {

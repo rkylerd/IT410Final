@@ -5,6 +5,11 @@ export default {
     htmlAttrs: {
       lang: 'en'
     },
+
+    serverMiddleware: [
+      { path: "/server-middleware", handler: "~/api/index.ts" },
+    ],
+
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
