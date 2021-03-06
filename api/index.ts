@@ -20,7 +20,7 @@ app.use((req:Request, res:Response, next:any) => {
 app.use(express.json())
 
 // connect to the database
-const connection = `mongodb://${env.DB_UNAME}:${env.DB_PWD}@127.0.0.1:27017/${env.DB_NAME}`;
+const connection = `mongodb://${env.DB_UNAME}:${env.DB_PWD}@127.0.0.1:27018/${env.DB_NAME}`;
 mongoose.connect(connection, {
     useNewUrlParser: true, 
     useUnifiedTopology: true

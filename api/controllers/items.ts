@@ -20,14 +20,14 @@ export default function() {
         },
         async getItems (req: Request, res: Response) {
             try {
-                return res.status(200).send({
+                return res.status(200).send([{
                     item1: "cap1",
                     item2: "cap2",
                     item3: "cap3",
                     item4: "cap4",
                     item5: "cap5",
                     item6: "cap6"
-                })
+                }])
             } catch (err) {
                 console.log(err);
                 return res.sendStatus(500);
