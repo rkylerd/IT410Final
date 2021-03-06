@@ -46,6 +46,23 @@ paths:
           description: "User does not have permission to access this resource"
         "401":
           description: "Must authenticate"
+    get:
+      tags:
+      - "store"
+      summary: "gets all items"
+      description: "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions"
+      operationId: "getItems"
+      x-controller: items
+      x-operation: getItems
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:    
+                  $ref: '#/components/schemas/Item'
   /item/{itemId}:
     get:
       tags:
