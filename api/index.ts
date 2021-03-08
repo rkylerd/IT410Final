@@ -5,7 +5,7 @@ import EnforcerMiddleware from 'openapi-enforcer-middleware'
 import { config } from 'dotenv'
 import auth from './auth'
 import mongoose from 'mongoose'
-const conf = config();
+config();
 const env = process.env;
 // Create express instance
 const app = express()

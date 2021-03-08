@@ -32,6 +32,8 @@ paths:
       operationId: "addItem"
       x-controller: items
       x-operation: addItem
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           'application/json':
@@ -54,6 +56,8 @@ paths:
       operationId: "getItems"
       x-controller: items
       x-operation: getItems
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: "successful operation"
@@ -72,14 +76,15 @@ paths:
       operationId: "getItemById"
       x-controller: items
       x-operation: getItemById
+      security:
+        - bearerAuth: []
       parameters:
       - name: "itemId"
         in: "path"
         description: "ID of item to return"
         required: true
         schema:
-          type: "integer"
-          format: "int64"
+          type: "string"
       responses:
         "200":
           description: "successful operation"
@@ -99,6 +104,8 @@ paths:
       operationId: "updateItem"
       x-controller: items
       x-operation: updateItem
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           'application/json':
@@ -110,8 +117,7 @@ paths:
         description: "ID of item that needs to be updated"
         required: true
         schema:
-          type: "integer"
-          format: "int64"
+          type: "string"
       responses:
         "400":
           description: "Invalid ID supplied"
@@ -135,6 +141,8 @@ paths:
       operationId: "deleteItem"
       x-controller: items
       x-operation: deleteItem
+      security:
+        - bearerAuth: []
       parameters:
       - name: "api_key"
         in: "header"
@@ -146,8 +154,7 @@ paths:
         description: "Item id to delete"
         required: true
         schema:
-          type: "integer"
-          format: "int64"
+          type: "string"
       responses:
         "400":
           description: "Invalid ID supplied"
@@ -172,6 +179,8 @@ paths:
       operationId: "uploadImage"
       x-controller: items
       x-operation: uploadItemImage
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           'application/json':
@@ -183,8 +192,7 @@ paths:
         description: "ID of item to update"
         required: true
         schema:
-          type: "integer"
-          format: "int64"
+          type: "string"
       responses:
         "200":
           description: "successful operation"
@@ -203,6 +211,8 @@ paths:
       operationId: "getOrders"
       x-controller: orders
       x-operation: getOrders
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: "successful operation"
@@ -220,6 +230,8 @@ paths:
       operationId: "createOrder"
       x-controller: orders
       x-operation: createOrder
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           'application/json':
@@ -243,6 +255,8 @@ paths:
       operationId: "getOrderById"
       x-controller: orders
       x-operation: getOrderById
+      security:
+        - bearerAuth: []
       parameters:
       - name: "orderId"
         in: "path"
@@ -269,6 +283,8 @@ paths:
       operationId: "deleteOrder"
       x-controller: orders
       x-operation: deleteOrder
+      security:
+        - bearerAuth: []
       parameters:
       - name: "orderId"
         in: "path"
@@ -300,6 +316,8 @@ paths:
       operationId: "findOrdersByStatus"
       x-controller: items
       x-operation: getOrdersByStatus
+      security:
+        - bearerAuth: []
       parameters:
       - name: "status"
         in: "query"
@@ -322,11 +340,11 @@ paths:
     post:
       tags:
       - "user"
-      summary: "Create user"
+      summary: "Sign up"
       description: "This can only be done by the logged in user."
-      operationId: "createUser"
+      operationId: "register"
       x-controller: users
-      x-operation: createUser
+      x-operation: register
       requestBody:
         content:
           'application/json':
@@ -348,6 +366,8 @@ paths:
       operationId: "getUserByName"
       x-controller: users
       x-operation: getUserByUsername
+      security:
+        - bearerAuth: []
       parameters:
       - name: username
         in: path
@@ -376,6 +396,8 @@ paths:
       operationId: "updateUser"
       x-controller: users
       x-operation: updateUser
+      security:
+        - bearerAuth: []
       parameters:
       - name: username
         in: path
@@ -409,6 +431,8 @@ paths:
       operationId: "deleteUser"
       x-controller: users
       x-operation: deleteUser
+      security:
+        - bearerAuth: []
       parameters:
       - name: username
         in: path
@@ -435,7 +459,7 @@ paths:
       - "user"
       summary: "Logs user into the system"
       description: ""
-      operationId: "loginUser"
+      operationId: "login"
       x-controller: users
       x-operation: login
       requestBody:
@@ -471,9 +495,11 @@ paths:
       - "user"
       summary: "Logs out current logged in user session"
       description: ""
-      operationId: "logoutUser"
+      operationId: "logout"
       x-controller: users
       x-operation: logout
+      security:
+        - bearerAuth: []
       parameters:
       - name: username
         in: path
@@ -487,11 +513,19 @@ paths:
         "500":
           description: "Internal server error"
 components:
+    responses:
+      UnauthorizedError:
+        description: Access token is missing or invalid
+    securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
     schemas:
       User:
           properties:
-            id:
-              type: integer
+            _id:
+              type: string
               readOnly: true
             username:
               type: string
@@ -513,8 +547,8 @@ components:
                   - $ref: '#/components/schemas/Address'
       Item:
           properties:
-            id:
-              type: integer
+            _id:
+              type: string
               readOnly: true
             name:
               type: string
@@ -522,7 +556,7 @@ components:
               type: number
             category:
               type: string
-            descrition:
+            description:
               type: string
             imageUrl:
               type: string

@@ -9,30 +9,43 @@ const generateToken = (data: any) => {
     });
 };
 
-
-const verifyToken = (req: any, res: any, next: any) => {
-    const bearerHeader: string = req.headers['authorization'];
-
-    if (typeof bearerHeader !== 'undefined') {
-        const bearer = bearerHeader.split(' ');
-        const bearerToken = bearer[1];
-        jwt.verify(bearerToken, SECRET, (err: any, authData: any) => {
-            if (err) {
-                res.sendStatus(403);
-            } else {
-                req.token = bearerToken;
-                req.user_id = authData.id;
-                next();
-            }
-        })
-    }
-    else {
-        res.sendStatus(401);
-    }
+const removeOldTokens = (tokens: string[]) => {
+    return tokens.filter(token => {
+        try {
+            internalJwtVerify(token);
+          return true;
+        } catch (error) {
+          return false;
+        }
+      });
 };
 
+const internalJwtVerify = (token: string) => {
+    return jwt.verify(token, SECRET);
+}
+
+const verifyToken = (req: any, res: any) => {
+    const bearer: string = req.headers['authorization'] || "";
+    
+    return new Promise((resolve, reject) => {
+        if (!bearer) {
+            reject("Missing JWT from authorization header.");   
+        }
+
+        const [,token = "" ] = bearer.split(' ');
+        
+        try {
+            req.token = token;
+            const decoded = internalJwtVerify(token);
+            resolve(decoded);
+        } catch (err) {
+            reject("Invalid or expired JWT.");
+        }
+    }); 
+};
 
 export default {
     generateToken,
-    verifyToken
+    verifyToken,
+    removeOldTokens
 };

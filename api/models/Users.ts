@@ -1,7 +1,7 @@
 import Address from '../models/Address'
 
 interface User {
-    id: string,
+    _id: string,
     username: string,
     email: string,
     password: string,
