@@ -21,7 +21,8 @@
     "mongoose": "^5.11.18",
     "nuxt": "^2.14.12",
     "openapi-enforcer": "^1.13.3",
-    "openapi-enforcer-middleware": "^2.0.0-alpha-7"
+    "openapi-enforcer-middleware": "^2.0.0-alpha-7",
+    "vue-flip": "^1.0.2"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^2.0.6",
