@@ -1,4 +1,7 @@
 export const state = () => ({
+    alertMsg: "",
+    showAlert: 0,
+    color: "",
     caps: [
         {
             id: 1,
@@ -121,10 +124,44 @@ export const state = () => ({
             promotionalPrice: 3
         },
     ],
+    cart: [],
   })
   
 export const mutations = {
   increment(state) {
     state.counter++
+  },
+
+  addCart(state, data) {
+      //check if there is stuff in the cart
+      //make sure we don't add something that is already in the cart
+      if (state.cart.length != 0) {
+          for (let i = 0; i < state.cart.length; i++) {
+              if (state.cart.item.id == data.item.id) {
+                state.cart.qty += data.qty;
+                break;
+              }
+          }
+      } else {
+          state.cart.push(data);
+      }
+  },
+  setShowAlert(state, data) {
+      state.showAlert = data.showAlert;
+      state.alertMsg = data.alertMsg;
+      state.color = data.color;
+  },
+
+  resetTimer(state) {
+    state.showAlert = 0;
   }
+}
+
+export const actions = {
+    setAlert(context, data) {
+        context.commit('setShowAlert', data);
+        setTimeout(() => {
+            context.commit('resetTimer');
+        }, data.showAlert);
+    },
 }

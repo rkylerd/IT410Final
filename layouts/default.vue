@@ -3,11 +3,13 @@
     <Header />
     <Banner/>
     <Nuxt />
+    <b-alert class="alert-notification" :show="showAlert" :value="alertMsg" :variant="color">{{alertMsg}}</b-alert>
     <Footer />
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import Header from "../components/shared/Header.vue";
 import Footer from "../components/shared/Footer.vue";
 import Banner from '../components/shared/Banner.vue';
@@ -16,7 +18,14 @@ export default {
     Header,
     Footer,
     Banner,
-  }
+  },
+  computed: mapState([
+    'alertMsg',
+    'showAlert',
+    'color',
+  ]),
+
+  
 }
 </script>
 
@@ -75,4 +84,13 @@ html {
   color: #fff;
   background-color: #35495e;
 }
+
+
+.alert-notification {
+  position: fixed;
+  bottom: 5%;
+  width: 90%;
+  left: 5%;
+}
+
 </style>
