@@ -115,7 +115,7 @@ export default function (
             try {
                 const user = await User.findOne({ username });
                 if (user) {
-                    res.status(200).send(user.toJSON());
+                    res.status(200).send(user.stripSenstiveFields());
                     return;
                 }
                 res.status(404).send(new CustomError(`User with username '${username}' not found.`, 404));
