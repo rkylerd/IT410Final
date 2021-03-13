@@ -2,8 +2,11 @@
     <div>
   <b-navbar toggleable="lg" type="dark" variant="info">
     <b-navbar-brand href="#">
-    <img src="~/assets/images/icons/cap-logo.png" alt="">
-    CAPS
+      <nuxt-link to="/">
+         <img src="~/assets/images/icons/cap-logo.png" alt="">
+          CAPS
+      </nuxt-link>
+   
     </b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
@@ -29,6 +32,7 @@
 
         <b-nav-item-dropdown right>
           <!-- Using 'button-content' slot -->
+          <nuxt-link to="/cart">Cart</nuxt-link>
           <template #button-content>
             <em>User</em>
           </template>

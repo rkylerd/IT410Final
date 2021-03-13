@@ -29,7 +29,7 @@ export default {
     {
       src: '~/plugins/vue-flip',
       mode: 'client'
-    }
+    },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -47,6 +47,7 @@ export default {
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

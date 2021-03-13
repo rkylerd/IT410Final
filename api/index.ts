@@ -26,7 +26,7 @@ app.use((req: Request, res: Response, next: any) => {
 app.use(express.json())
 
 // connect to the database
-const connection = `mongodb://${env.DB_UNAME}:${env.DB_PWD}@127.0.0.1:27017/${env.DB_NAME}`;
+const connection = `mongodb://${env.DB_UNAME}:${env.DB_PWD}@127.0.0.1:${env.DB_PORT}/${env.DB_NAME}`;
 mongoose.connect(connection, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -76,7 +76,7 @@ const controllersPath = path.resolve(__dirname, 'controllers')
 app.use(enforcerMiddleware.route(controllersPath, dependencies))
 
 if (require.main === module) {
-  const port = process.env.PORT || 3001
+  const port = process.env.API_PORT || 3001
   app.listen(port, () => {
     console.log(`API server listening on port ${port}`)
   })

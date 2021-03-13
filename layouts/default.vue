@@ -25,6 +25,12 @@ export default {
     'color',
   ]),
 
+  async mounted() {
+    await this.$store.dispatch('orders');
+  },
+
+
+
   
 }
 </script>

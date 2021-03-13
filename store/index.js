@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const state = () => ({
     alertMsg: "",
     showAlert: 0,
@@ -163,5 +165,15 @@ export const actions = {
         setTimeout(() => {
             context.commit('resetTimer');
         }, data.showAlert);
+    },
+
+
+    async orders(context) {
+        try {
+            let response = await axios.get('localhost:3001/order');
+            console.log(response);
+        } catch (err) {
+            console.log(err.response);
+        }
     },
 }
