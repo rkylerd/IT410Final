@@ -65,5 +65,6 @@ const isTokenValid = async (req: Request, res: Response, username: string = "", 
 export default {
     generateToken,
     isTokenValid,
+    verifyToken,
     removeOldTokens
 };
