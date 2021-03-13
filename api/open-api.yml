@@ -32,6 +32,8 @@ paths:
       operationId: "addItem"
       x-controller: items
       x-operation: addItem
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           'application/json':
@@ -54,6 +56,14 @@ paths:
       operationId: "getItems"
       x-controller: items
       x-operation: getItems
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: "category"
+        in: "query"
+        description: "Category values that need to be considered for filter"
+        schema:
+          type: string
       responses:
         "200":
           description: "successful operation"
@@ -63,6 +73,8 @@ paths:
                 type: array
                 items:    
                   $ref: '#/components/schemas/Item'
+        "401":
+          description: "Must authenticate"
   /item/{itemId}:
     get:
       tags:
@@ -72,14 +84,15 @@ paths:
       operationId: "getItemById"
       x-controller: items
       x-operation: getItemById
+      security:
+        - bearerAuth: []
       parameters:
       - name: "itemId"
         in: "path"
         description: "ID of item to return"
         required: true
         schema:
-          type: "integer"
-          format: "int64"
+          type: "string"
       responses:
         "200":
           description: "successful operation"
@@ -89,6 +102,8 @@ paths:
                 $ref: "#/components/schemas/Item"
         "400":
           description: "Invalid ID supplied"
+        "401":
+          description: "Must authenticate"
         "404":
           description: "Item not found"
     put:
@@ -99,6 +114,8 @@ paths:
       operationId: "updateItem"
       x-controller: items
       x-operation: updateItem
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           'application/json':
@@ -110,11 +127,14 @@ paths:
         description: "ID of item that needs to be updated"
         required: true
         schema:
-          type: "integer"
-          format: "int64"
+          type: "string"
       responses:
         "400":
           description: "Invalid ID supplied"
+        "401":
+          description: "Must authenticate"
+        "403":
+          description: "User does not have permission to access this resource"
         "404":
           description: "Item not found"
         "500":
@@ -135,6 +155,8 @@ paths:
       operationId: "deleteItem"
       x-controller: items
       x-operation: deleteItem
+      security:
+        - bearerAuth: []
       parameters:
       - name: "api_key"
         in: "header"
@@ -146,11 +168,14 @@ paths:
         description: "Item id to delete"
         required: true
         schema:
-          type: "integer"
-          format: "int64"
+          type: "string"
       responses:
         "400":
           description: "Invalid ID supplied"
+        "401":
+          description: "Must authenticate"
+        "403":
+          description: "User does not have permission to access this resource"
         "404":
           description: "Item not found"
         "500":
@@ -172,6 +197,8 @@ paths:
       operationId: "uploadImage"
       x-controller: items
       x-operation: uploadItemImage
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           'application/json':
@@ -183,8 +210,7 @@ paths:
         description: "ID of item to update"
         required: true
         schema:
-          type: "integer"
-          format: "int64"
+          type: "string"
       responses:
         "200":
           description: "successful operation"
@@ -192,6 +218,10 @@ paths:
             application/json:
               schema:
                 type: string
+        "401":
+          description: "Must authenticate"
+        "403":
+          description: "User does not have permission to access this resource"
         "500":
           description: "Internal Server Error"
   /order:
@@ -203,6 +233,8 @@ paths:
       operationId: "getOrders"
       x-controller: orders
       x-operation: getOrders
+      security:
+        - bearerAuth: []
       responses:
         "200":
           description: "successful operation"
@@ -212,6 +244,8 @@ paths:
                 type: array
                 items:    
                   $ref: '#/components/schemas/Order'
+        "401":
+          description: "Must authenticate"
     post:
       tags:
       - "store"
@@ -220,6 +254,8 @@ paths:
       operationId: "createOrder"
       x-controller: orders
       x-operation: createOrder
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           'application/json':
@@ -234,6 +270,8 @@ paths:
                 $ref: "#/components/schemas/Order"
         "400":
           description: "Invalid Order"
+        "401":
+          description: "Must authenticate"
   /order/{orderId}:
     get:
       tags:
@@ -243,6 +281,8 @@ paths:
       operationId: "getOrderById"
       x-controller: orders
       x-operation: getOrderById
+      security:
+        - bearerAuth: []
       parameters:
       - name: "orderId"
         in: "path"
@@ -259,6 +299,8 @@ paths:
                 $ref: "#/components/schemas/Order"
         "400":
           description: "Invalid ID supplied"
+        "401":
+          description: "Must authenticate"
         "404":
           description: "Order not found"
     delete:
@@ -269,6 +311,8 @@ paths:
       operationId: "deleteOrder"
       x-controller: orders
       x-operation: deleteOrder
+      security:
+        - bearerAuth: []
       parameters:
       - name: "orderId"
         in: "path"
@@ -279,6 +323,8 @@ paths:
       responses:
         "400":
           description: "Invalid ID supplied"
+        "401":
+          description: "Must authenticate"
         "404":
           description: "Order not found"
         "500": 
@@ -296,10 +342,12 @@ paths:
       tags:
       - "order"
       summary: "Finds Orders by status"
-      description: "Multiple status values can be provided with comma separated strings"
+      description: "Multiple status values can be provided with pipe '|' separated strings"
       operationId: "findOrdersByStatus"
-      x-controller: items
+      x-controller: orders
       x-operation: getOrdersByStatus
+      security:
+        - bearerAuth: []
       parameters:
       - name: "status"
         in: "query"
@@ -318,15 +366,48 @@ paths:
                   $ref: "#/components/schemas/Order"
         "400":
           description: "Invalid status value"
+        "401":
+          description: "Must authenticate"
+        "403":
+          description: "User does not have permission to access this resource"
   /user:
+    get:
+      tags:
+      - "user"
+      summary: "Get all users"
+      description: ""
+      operationId: "getUsers"
+      x-controller: users
+      x-operation: getUsers
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "400":
+          description: "Invalid username supplied"
+        "401": 
+          description: "User not authenticated"
+        "403": 
+          description: "User not authorized"
+        "404":
+          description: "User not found"
+        "500": 
+          description: "Internal server error"
     post:
       tags:
       - "user"
-      summary: "Create user"
+      summary: "Sign up"
       description: "This can only be done by the logged in user."
-      operationId: "createUser"
+      operationId: "register"
       x-controller: users
-      x-operation: createUser
+      x-operation: register
       requestBody:
         content:
           'application/json':
@@ -345,9 +426,11 @@ paths:
       - "user"
       summary: "Get user by user name"
       description: ""
-      operationId: "getUserByName"
+      operationId: "getUserByUsername"
       x-controller: users
       x-operation: getUserByUsername
+      security:
+        - bearerAuth: []
       parameters:
       - name: username
         in: path
@@ -364,6 +447,10 @@ paths:
                 $ref: "#/components/schemas/User"
         "400":
           description: "Invalid username supplied"
+        "401": 
+          description: "User not authenticated"
+        "403": 
+          description: "User not authorized"
         "404":
           description: "User not found"
         "500": 
@@ -376,6 +463,8 @@ paths:
       operationId: "updateUser"
       x-controller: users
       x-operation: updateUser
+      security:
+        - bearerAuth: []
       parameters:
       - name: username
         in: path
@@ -393,8 +482,6 @@ paths:
           description: "Invalid user supplied"
         "404":
           description: "User not found"
-        "403": 
-          description: "User not authorized"
         "401": 
           description: "User not authenticated"
         "204":
@@ -409,6 +496,8 @@ paths:
       operationId: "deleteUser"
       x-controller: users
       x-operation: deleteUser
+      security:
+        - bearerAuth: []
       parameters:
       - name: username
         in: path
@@ -429,13 +518,41 @@ paths:
           description: "Not authorized to delete user"
         "401": 
           description: "Must be logged in to perform action"
+  /user/{username}/orders:
+    get:
+      tags:
+      - "store"
+      summary: "Find orders belonging to a specific user"
+      operationId: "getOrdersOfUser"
+      x-controller: orders
+      x-operation: getOrdersOfUser
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: username
+        in: path
+        required: true
+        description: the user identifier, as username 
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:    
+                  $ref: '#/components/schemas/Order'
+        "401":
+          description: "Must authenticate"
   /user/login:
     put:
       tags:
       - "user"
       summary: "Logs user into the system"
       description: ""
-      operationId: "loginUser"
+      operationId: "login"
       x-controller: users
       x-operation: login
       requestBody:
@@ -471,9 +588,11 @@ paths:
       - "user"
       summary: "Logs out current logged in user session"
       description: ""
-      operationId: "logoutUser"
+      operationId: "logout"
       x-controller: users
       x-operation: logout
+      security:
+        - bearerAuth: []
       parameters:
       - name: username
         in: path
@@ -484,14 +603,24 @@ paths:
       responses:
         "204": 
           description: "user logged out"
+        "401":
+          description: "Must authenticate"
         "500":
           description: "Internal server error"
 components:
+    responses:
+      UnauthorizedError:
+        description: Access token is missing or invalid
+    securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
     schemas:
       User:
           properties:
-            id:
-              type: integer
+            _id:
+              type: string
               readOnly: true
             username:
               type: string
@@ -513,8 +642,8 @@ components:
                   - $ref: '#/components/schemas/Address'
       Item:
           properties:
-            id:
-              type: integer
+            _id:
+              type: string
               readOnly: true
             name:
               type: string
@@ -522,7 +651,7 @@ components:
               type: number
             category:
               type: string
-            descrition:
+            description:
               type: string
             imageUrl:
               type: string
@@ -569,7 +698,7 @@ components:
             readOnly: true
           # address:
           #     $ref: '#/components/schemas/Address'
-          userId:
+          username:
             type: string
       Address:
         type: object
