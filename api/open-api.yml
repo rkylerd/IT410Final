@@ -23,7 +23,7 @@ tags:
     description: "Find out more about our store"
     url: "http://swagger.io"
 paths:
-  /item:
+  /api/item:
     post:
       tags:
       - "item"
@@ -75,7 +75,7 @@ paths:
                   $ref: '#/components/schemas/Item'
         "401":
           description: "Must authenticate"
-  /item/{itemId}:
+  /api/item/{itemId}:
     get:
       tags:
       - "item"
@@ -188,7 +188,7 @@ paths:
                 properties:
                   message:
                     type: string
-  /item/{itemId}/uploadImage:
+  /api/item/{itemId}/uploadImage:
     post:
       tags:
       - "item"
@@ -224,7 +224,7 @@ paths:
           description: "User does not have permission to access this resource"
         "500":
           description: "Internal Server Error"
-  /order:
+  /api/order:
     get:
       tags:
       - "store"
@@ -272,7 +272,7 @@ paths:
           description: "Invalid Order"
         "401":
           description: "Must authenticate"
-  /order/{orderId}:
+  /api/order/{orderId}:
     get:
       tags:
       - "store"
@@ -337,7 +337,7 @@ paths:
                 properties:
                   message:
                     type: string
-  /order/findByStatus:
+  /api/order/findByStatus:
     get:
       tags:
       - "order"
@@ -370,7 +370,7 @@ paths:
           description: "Must authenticate"
         "403":
           description: "User does not have permission to access this resource"
-  /user:
+  /api/user:
     get:
       tags:
       - "user"
@@ -420,7 +420,7 @@ paths:
           description: "internal server error"
         "422":
           description: "duplicate username or email"
-  /user/me:
+  /api/user/me:
     get:
       tags:
       - "user"
@@ -444,7 +444,7 @@ paths:
           description: "User not found"
         "500": 
           description: "Internal server error"
-  /user/{username}:
+  /api/user/{username}:
     get:
       tags:
       - "user"
@@ -542,7 +542,7 @@ paths:
           description: "Not authorized to delete user"
         "401": 
           description: "Must be logged in to perform action"
-  /user/{username}/orders:
+  /api/user/{username}/orders:
     get:
       tags:
       - "store"
@@ -570,7 +570,7 @@ paths:
                   $ref: '#/components/schemas/Order'
         "401":
           description: "Must authenticate"
-  /user/login:
+  /api/user/login:
     put:
       tags:
       - "user"
@@ -606,7 +606,7 @@ paths:
           description: "Invalid username/password supplied"
         "500":
           description: "Internal server errror"
-  /user/{username}/logout:
+  /api/user/{username}/logout:
     delete:
       tags:
       - "user"
