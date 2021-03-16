@@ -4,7 +4,7 @@ import CustomError from '../models/Error'
 export default function (
     bcrypt: any,
     mongoUserSchema: any,
-    { isTokenValid, removeOldTokens, generateToken }: { isTokenValid: Function, generateToken: Function, removeOldTokens: Function },
+    { isTokenValid, removeOldTokens, generateToken, verifyToken }: { isTokenValid: Function, generateToken: Function, removeOldTokens: Function, verifyToken: Function },
     mongoose: any
 ) {
 
@@ -98,6 +98,30 @@ export default function (
                     console.log('ERROR---getUsers', err);
                     res.sendStatus(500);
                 }
+            }
+        },
+        async getCurrentUser(req: Request, res: Response) {
+            let username;
+            // Get the username from the decoded JWT
+            try {
+                // @ts-ignore
+                const { username: jwtUsername = "" } = await verifyToken(req, res);
+                username = jwtUsername;
+            } catch (err) {
+                res.status(401).enforcer.send(new CustomError(err.toString(), 401));
+                return;
+            }
+
+            try {
+                const user = await User.findOne({ username });
+                if (user) {
+                    res.status(200).send(user.stripSenstiveFields());
+                    return;
+                }
+                res.status(404).send(new CustomError(`User with username '${username}' not found.`, 404));
+            } catch (err) {
+                console.log('ERROR---getCurrentUser', err);
+                res.sendStatus(500);
             }
         },
         async getUserByUsername(req: Request, res: Response) {
