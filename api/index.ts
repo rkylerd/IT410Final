@@ -46,7 +46,7 @@ mongoose.connect(connection, {
     }
 
     // Load test items
-    if (NODE_ENV === 'local') {
+    if (NODE_ENV === 'development') {
       const Item = mongoose.model('Item');
       if (!(await Item.find()).length) {
         await Item.insertMany(items);

@@ -12,24 +12,24 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
-          <b-nav-item href="#"
-            ><nuxt-link to="/caps?type=baseball"
+          <b-nav-item
+            ><nuxt-link to="/items?type=baseball"
               >Baseball Caps</nuxt-link
             ></b-nav-item
           >
           <b-nav-item
-            ><nuxt-link to="/caps?type=beanie">Beanies</nuxt-link></b-nav-item
+            ><nuxt-link to="/items?type=beanie">Beanies</nuxt-link></b-nav-item
           >
           <b-nav-item
-            ><nuxt-link to="/caps?type=fedora">Fedoras</nuxt-link></b-nav-item
+            ><nuxt-link to="/items?type=fedora">Fedoras</nuxt-link></b-nav-item
           >
           <b-nav-item
-            ><nuxt-link to="/caps?type=western"
+            ><nuxt-link to="/items?type=western"
               >Western Hats</nuxt-link
             ></b-nav-item
           >
           <b-nav-item
-            ><nuxt-link to="/caps?type=top">Top Hats</nuxt-link></b-nav-item
+            ><nuxt-link to="/items?type=top">Top Hats</nuxt-link></b-nav-item
           >
         </b-navbar-nav>
 

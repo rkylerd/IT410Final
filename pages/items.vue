@@ -1,18 +1,49 @@
 <template>
-  <h1>{{ j }}Items page {{ mountains }}</h1>
+  <div>
+    <div class="cap">
+      <Cap v-for="cap in items" :key="cap.id" :cap="cap" />
+    </div>
+  </div>
 </template>
 
-<script lang='ts'>
-import { defineComponent } from '@nuxtjs/composition-api'
-
+<script>
+import { mapState } from 'vuex'
+import Caps from '../components/caps/CapList.vue'
 export default {
-  setup() {
-    return { j: 'jason' }
+  data() {
+    return {}
   },
-  async asyncData({ $axios }: any) {
-    const mountains = await $axios.$get('api/item')
-    return { mountains }
+  components: {
+    Caps,
   },
+  watchQuery: true,
+  async asyncData({ $axios, store, route: { query: { type = '' } = {} } }) {
+    try {
+      const {
+        headers: { authorization: auth = 'Bearer ' } = {},
+      } = await $axios.put('/api/user/login', {
+        username: 'admin',
+        password: 'admin',
+      })
+
+      const jwt = auth.split(' ')[1] || ''
+      store.dispatch('setAuth', jwt)
+
+      const { data: items = [] } = await $axios.get(
+        `/api/item${type ? `?category=${type}` : ''}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      )
+
+      return { items }
+    } catch (err) {
+      console.log('error', err)
+    }
+  },
+  computed: mapState(['jwt']),
 }
 </script>
 

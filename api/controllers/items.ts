@@ -34,34 +34,31 @@ export default function (
             }
         },
         async getItems(req: Request, res: Response) {
-            if (await isTokenValid(req, res)) {
-                const { category = "" } = req.enforcer.query;
-                try {
-                    res.status(200).send(category ?
-                        // will not work correctly if there are spaces surrounding the pipe symbol
-                        await Item.find({ category: { $in: category.split("|") } }) :
-                        await Item.find()
-                    );
-                } catch (err) {
-                    console.log('ERROR---getItems', err);
-                    res.sendStatus(500);
-                }
+            const { category = "" } = req.enforcer.query;
+            try {
+                res.status(200).send(category ?
+                    // will not work correctly if there are spaces surrounding the pipe symbol
+                    await Item.find({ category: { $in: category.split("|") } }) :
+                    await Item.find()
+                );
+            } catch (err) {
+                console.log('ERROR---getItems', err);
+                res.sendStatus(500);
             }
         },
         async getItemById(req: Request, res: Response) {
-            if (await isTokenValid(req, res)) {
-                try {
-                    const itemId = req.enforcer.params.itemId;
-                    const item = await Item.findOne({ _id: itemId });
-                    if (item) {
-                        res.status(200).send(item);
-                    }
-                    res.status(404).send(new Error(`Item with id '${itemId}' not found.`, 404));
-                } catch (err) {
-                    console.log('ERROR---getItemById', err);
-                    res.sendStatus(500);
+            try {
+                const itemId = req.enforcer.params.itemId;
+                const item = await Item.findOne({ _id: itemId });
+                if (item) {
+                    res.status(200).send(item);
                 }
+                res.status(404).send(new Error(`Item with id '${itemId}' not found.`, 404));
+            } catch (err) {
+                console.log('ERROR---getItemById', err);
+                res.sendStatus(500);
             }
+
         },
         async deleteItem(req: Request, res: Response) {
             if (await isTokenValid(req, res, undefined, true)) {
