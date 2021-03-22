@@ -6,10 +6,6 @@ export default {
       lang: 'en'
     },
 
-    serverMiddleware: [
-      { path: "/server-middleware", handler: "~/api/index.ts" },
-    ],
-
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -56,5 +52,12 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-  }
+  },
+
+  serverMiddleware: [
+
+    // Will register file from project server-middleware directory to handle /server-middleware/* requires
+    { path: '/api', handler: '~/api' }
+
+  ]
 }

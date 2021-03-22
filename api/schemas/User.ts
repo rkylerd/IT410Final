@@ -27,10 +27,9 @@ export default function (mongoose: any, bcrypt: any, removeOldTokens: Function) 
         this.tokens = removeOldTokens(this.tokens);
     }
 
-    userSchema.methods.toJSON = function () {
-        let obj = this.toObject();
-        delete obj.token;
-        return obj;
+    userSchema.methods.stripSenstiveFields = function () {
+        const { username, email, addresses } = this.toObject();
+        return { username, email, addresses };
     }
 
     userSchema.pre('save', async function (next: Function) {
