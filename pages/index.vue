@@ -1,11 +1,10 @@
 <template>
   <div class="container">
     <div>
+      <Banner />
       <cap-list />
       <Logo />
-      <h1 class="title">
-        caps
-      </h1>
+      <h1 class="title">caps</h1>
       <div class="links">
         <a
           href="https://nuxtjs.org/"
@@ -21,7 +20,7 @@
           rel="noopener noreferrer"
           class="button--grey"
         >
-          GitHub 
+          GitHub
         </a>
       </div>
     </div>
@@ -29,16 +28,18 @@
 </template>
 
 <script>
-  import CapList from '../components/caps/CapList.vue';
-  export default {
-    // async asyncData({ params, $http }) {
-    //   const post = await $http.$get(`https://api.nuxtjs.dev/posts/${params.id}`)
-    //   return { post }
-    // }
-    components: {
-      CapList,
-    }
-  }
+import CapList from '../components/caps/CapList.vue'
+import Banner from '../components/shared/Banner'
+export default {
+  // async asyncData({ params, $http }) {
+  //   const post = await $http.$get(`https://api.nuxtjs.dev/posts/${params.id}`)
+  //   return { post }
+  // }
+  components: {
+    CapList,
+    Banner,
+  },
+}
 </script>
 
 <style>
@@ -52,16 +53,8 @@
 }
 
 .title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   display: block;
   font-weight: 300;
   font-size: 100px;

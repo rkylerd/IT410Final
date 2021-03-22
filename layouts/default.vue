@@ -1,7 +1,6 @@
 <template>
   <div>
     <Header />
-    <Banner/>
     <Nuxt />
     <b-alert class="alert-notification" :show="showAlert" :value="alertMsg" :variant="color">{{alertMsg}}</b-alert>
     <Footer />
@@ -12,12 +11,10 @@
 import { mapState } from 'vuex'
 import Header from "../components/shared/Header.vue";
 import Footer from "../components/shared/Footer.vue";
-import Banner from '../components/shared/Banner.vue';
 export default {
   components: {
     Header,
     Footer,
-    Banner,
   },
   computed: mapState([
     'alertMsg',
