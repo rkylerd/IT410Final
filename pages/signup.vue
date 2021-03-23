@@ -2,7 +2,7 @@
   <div>
     <section>
       <form>
-        <h1>Login</h1>
+        <h1>Sign Up</h1>
         <input-field
           :name="username"
           labelName="Username"
@@ -12,6 +12,18 @@
             (uname) => {
               !this.usernameAttempted && (this.usernameAttempted = true)
               this.username = uname
+            }
+          "
+        />
+        <input-field
+          :name="email"
+          labelName="Email"
+          :watchInvalid="emailAttempted"
+          :hint="inputValidation"
+          @changed="
+            (email) => {
+              !this.emailAttempted && (this.emailAttempted = true)
+              this.email = email
             }
           "
         />
@@ -27,12 +39,36 @@
             }
           "
         />
+        <input-field
+          :name="fName"
+          labelName="First Name"
+          :watchInvalid="fNameAttempted"
+          :hint="inputValidation"
+          @changed="
+            (fName) => {
+              !this.fNameAttempted && (this.fNameAttempted = true)
+              this.fName = fName
+            }
+          "
+        />
+        <input-field
+          :name="lName"
+          labelName="Last Name"
+          :watchInvalid="lNameAttempted"
+          :hint="inputValidation"
+          @changed="
+            (lName) => {
+              !this.lNameAttempted && (this.lNameAttempted = true)
+              this.lName = lName
+            }
+          "
+        />
         <b-row class="error">
           <span v-if="error">{{ error }}</span>
         </b-row>
         <b-row>
-          <b-button variant="outline-primary" id="login" @click="login"
-            >Login</b-button
+          <b-button variant="outline-primary" id="login" @click="signup"
+            >Sign Up</b-button
           >
         </b-row>
       </form>
@@ -48,27 +84,40 @@ export default {
     return {
       usernameAttempted: false,
       passwordAttempted: false,
+      emailAttempted: false,
+      fNameAttempted: false,
+      lNameAttempted: false,
       username: '',
+      email: '',
       password: '',
+      fName: '',
+      lName: '',
       inputValidation: '*Required field',
       error: '',
     }
   },
   methods: {
-    async login() {
+    async signup() {
       try {
+        const user = {
+          username: this.username,
+          email: this.email,
+          fName: this.fName,
+          lName: this.lName,
+        }
+
         const {
           headers: { authorization: auth = 'Bearer ' } = {},
-        } = await this.$axios.put('/api/user/login', {
-          username: this.username,
+        } = await this.$axios.post('/api/user', {
+          ...user,
           password: this.password,
         })
 
         const jwt = auth.split(' ')[1] || ''
         if (jwt) {
           this.$store.dispatch('setAuth', jwt)
+          this.$store.dispatch('setUser', user)
           this.$router.push({ path: '/' })
-        } else {
         }
       } catch (err) {
         const {
