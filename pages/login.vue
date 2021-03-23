@@ -2,37 +2,33 @@
   <div>
     <section>
       <form>
-        <b-form-group
-          id="fieldset-1"
-          label="Username"
-          label-for="username-input"
-          :invalid-feedback="invalidFeedback"
-          :state="unameState"
-        >
-          <b-form-input
-            id="username-input"
-            v-model="username"
-            :state="unameState"
-            trim
-          ></b-form-input>
-        </b-form-group>
-
-        <b-form-group
-          id="fieldset-1"
-          label="Enter your name"
-          label-for="password"
-          :invalid-feedback="invalidFeedback"
-          :state="passwordState"
-        >
-          <b-form-input
-            id="password"
-            v-model="password"
-            :state="passwordState"
-            trim
-          ></b-form-input>
-        </b-form-group>
+        <h1>Login</h1>
+        <input-field
+          :name="username"
+          labelName="Username"
+          :watchInvalid="usernameAttempted"
+          :hint="inputValidation"
+          @changed="
+            (uname) => {
+              !this.usernameAttempted && (this.usernameAttempted = true)
+              this.username = uname
+            }
+          "
+        />
+        <input-field
+          :name="password"
+          labelName="Password"
+          :watchInvalid="passwordAttempted"
+          :hint="inputValidation"
+          @changed="
+            (password) => {
+              !this.passwordAttempted && (this.passwordAttempted = true)
+              this.password = password
+            }
+          "
+        />
         <b-row class="error">
-          <span v-if="error">Invalid credentials. Try again.</span>
+          <span v-if="error">{{ error }}</span>
         </b-row>
         <b-row>
           <b-button variant="outline-primary" id="login" @click="login"
@@ -45,29 +41,21 @@
 </template>
 
 <script>
+import InputField from '../components/InputField.vue'
 export default {
-  computed: {
-    unameState() {
-      return !this.loginAttempted || this.username.length > 0
-    },
-    passwordState() {
-      return !this.loginAttempted || this.password.length > 0
-    },
-    invalidFeedback() {
-      return `*Required field`
-    },
-  },
+  components: { InputField },
   data() {
     return {
-      loginAttempted: false,
+      usernameAttempted: false,
+      passwordAttempted: false,
       username: '',
       password: '',
+      inputValidation: '*Required field',
       error: false,
     }
   },
   methods: {
     async login() {
-      this.loginAttempted = true
       try {
         const {
           headers: { authorization: auth = 'Bearer ' } = {},
@@ -83,7 +71,10 @@ export default {
         } else {
         }
       } catch (err) {
-        this.error = true
+        const {
+          message = 'Invalid credentials.ddd Try again.',
+        } = err.response.data
+        this.error = message
       }
     },
   },
@@ -93,7 +84,15 @@ export default {
 <style>
 section form {
   max-width: 400px;
-  margin: auto;
+  margin: 10px auto;
+  padding: 20px;
+  border-radius: 5px;
+  /* offset-x | offset-y | blur-radius | spread-radius | color */
+  box-shadow: 2px 2px 10px 5px #2121;
+}
+
+section form h1 {
+  text-align: center;
 }
 
 div.row {
@@ -105,6 +104,8 @@ div.row.error {
   justify-content: center;
   color: #dc3545;
   font-size: 13px;
+  min-height: 30px;
+  vertical-align: middle;
 }
 
 #login {

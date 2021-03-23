@@ -1,48 +1,39 @@
 <template>
-  <div>
+  <div id="template">
     <Header />
     <Nuxt />
-    <b-alert class="alert-notification" :show="showAlert" :value="alertMsg" :variant="color">{{alertMsg}}</b-alert>
+    <b-alert
+      class="alert-notification"
+      :show="showAlert"
+      :value="alertMsg"
+      :variant="color"
+      >{{ alertMsg }}</b-alert
+    >
     <Footer />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import Header from "../components/shared/Header.vue";
-import Footer from "../components/shared/Footer.vue";
+import Header from '../components/shared/Header.vue'
+import Footer from '../components/shared/Footer.vue'
 export default {
   components: {
     Header,
     Footer,
   },
-  computed: mapState([
-    'alertMsg',
-    'showAlert',
-    'color',
-  ]),
+  computed: mapState(['alertMsg', 'showAlert', 'color']),
 
   async mounted() {
-    await this.$store.dispatch('orders');
+    await this.$store.dispatch('orders')
   },
-
-
-
-  
 }
 </script>
 
 <style>
 html {
-  font-family:
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;
@@ -50,6 +41,16 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+}
+
+html,
+body,
+div#__nuxt,
+div#__layout {
+  height: 100%;
+}
+div#template {
+  min-height: 100%;
 }
 
 *,
@@ -88,12 +89,10 @@ html {
   background-color: #35495e;
 }
 
-
 .alert-notification {
   position: fixed;
   bottom: 5%;
   width: 90%;
   left: 5%;
 }
-
 </style>
