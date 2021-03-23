@@ -2,20 +2,34 @@ import axios from 'axios';
 
 export const state = () => ({
     jwt: "",
+    user: {
+        username: "",
+        email: "",
+        fName: "",
+        lName: "",
+        phone: "",
+        addresses: []
+    },
     alertMsg: "",
     showAlert: 0,
     color: "",
     cart: [],
+    loginRedirectUrl: ''
 })
 
 export const mutations = {
     setAuth(state, jwt = "") {
         state.jwt = jwt;
     },
+    setUser(state, user) {
+        state.user = user;
+    },
+    updateUser(state, user) {
+        state.user = { ...state.user, ...user };
+    },
     increment(state) {
         state.counter++
     },
-
     addCart(state, data) {
         //check if there is stuff in the cart
         //make sure we don't add something that is already in the cart
@@ -35,7 +49,6 @@ export const mutations = {
         state.alertMsg = data.alertMsg;
         state.color = data.color;
     },
-
     resetTimer(state) {
         state.showAlert = 0;
     }
@@ -46,6 +59,13 @@ export const actions = {
         context.commit('setAuth', jwt);
     },
 
+    setUser(context, user) {
+        context.commit('setUser', user);
+    },
+
+    updateUser(context, user) {
+        context.commit('updateUser', user);
+    },
 
     setAlert(context, data) {
         context.commit('setShowAlert', data);
