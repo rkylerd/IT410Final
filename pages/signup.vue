@@ -1,64 +1,59 @@
 <template>
   <div>
     <section>
-      <form>
+      <form @keyup.enter="signup">
         <h1>Sign Up</h1>
         <input-field
-          :name="username"
+          :value="username"
+          name="username"
           labelName="Username"
-          :watchInvalid="usernameAttempted"
           :hint="inputValidation"
           @changed="
             (uname) => {
-              !this.usernameAttempted && (this.usernameAttempted = true)
               this.username = uname
             }
           "
         />
         <input-field
-          :name="email"
+          :value="email"
+          name="email"
           labelName="Email"
-          :watchInvalid="emailAttempted"
           :hint="inputValidation"
           @changed="
             (email) => {
-              !this.emailAttempted && (this.emailAttempted = true)
               this.email = email
             }
           "
         />
         <input-field
-          :name="password"
+          :value="password"
+          name="password"
           labelName="Password"
-          :watchInvalid="passwordAttempted"
           :hint="inputValidation"
           @changed="
             (password) => {
-              !this.passwordAttempted && (this.passwordAttempted = true)
               this.password = password
             }
           "
         />
         <input-field
-          :name="fName"
+          :value="fName"
+          name="first name"
           labelName="First Name"
-          :watchInvalid="fNameAttempted"
           :hint="inputValidation"
           @changed="
             (fName) => {
-              !this.fNameAttempted && (this.fNameAttempted = true)
               this.fName = fName
             }
           "
         />
         <input-field
-          :name="lName"
+          name="last name"
+          :value="lName"
           labelName="Last Name"
-          :watchInvalid="lNameAttempted"
           :hint="inputValidation"
           @changed="
             (lName) => {
-              !this.lNameAttempted && (this.lNameAttempted = true)
               this.lName = lName
             }
           "
@@ -82,11 +77,6 @@ export default {
   components: { InputField },
   data() {
     return {
-      usernameAttempted: false,
-      passwordAttempted: false,
-      emailAttempted: false,
-      fNameAttempted: false,
-      lNameAttempted: false,
       username: '',
       email: '',
       password: '',

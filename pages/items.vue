@@ -19,23 +19,8 @@ export default {
   watchQuery: true,
   async asyncData({ $axios, store, route: { query: { type = '' } = {} } }) {
     try {
-      const {
-        headers: { authorization: auth = 'Bearer ' } = {},
-      } = await $axios.put('/api/user/login', {
-        username: 'admin',
-        password: 'admin',
-      })
-
-      const jwt = auth.split(' ')[1] || ''
-      store.dispatch('setAuth', jwt)
-
       const { data: items = [] } = await $axios.get(
-        `/api/item${type ? `?category=${type}` : ''}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-        }
+        `/api/item${type ? `?category=${type}` : ''}`
       )
 
       return { items }
@@ -43,7 +28,6 @@ export default {
       console.log('error', err)
     }
   },
-  computed: mapState(['jwt']),
 }
 </script>
 

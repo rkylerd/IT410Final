@@ -48,15 +48,53 @@
 
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
-            <nuxt-link to="/cart">Cart</nuxt-link>
             <template #button-content>
               <em>User</em>
             </template>
-            <b-dropdown-item href="#">Profile</b-dropdown-item>
-            <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+            <template v-if="user.username">
+              <b-dropdown-item href="#"
+                ><nuxt-link to="/cart">Cart</nuxt-link></b-dropdown-item
+              >
+              <b-dropdown-item href="/profile">Profile</b-dropdown-item>
+              <b-dropdown-item href="#" @click="logout"
+                >Sign Out</b-dropdown-item
+              >
+            </template>
+            <b-dropdown-item v-else href="/login">Sign In</b-dropdown-item>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
   </div>
 </template>
+
+<script lang="ts">
+import Vue from 'vue'
+export default Vue.extend({
+  computed: {
+    user() {
+      return this.$store.state.user
+    },
+  },
+  methods: {
+    async logout() {
+      try {
+        await this.$axios.put(
+          `/api/user/${this.$store.state.user.username}/logout`,
+          null,
+          {
+            headers: {
+              Authorization: `Bearer ${this.$store.state.jwt}`,
+            },
+          }
+        )
+        this.$store.dispatch('setAuth', '')
+        this.$store.dispatch('setUser', {})
+        this.$router.replace('/login')
+      } catch (err) {
+        console.log(err.response.data)
+      }
+    },
+  },
+})
+</script>
