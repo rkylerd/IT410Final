@@ -14,7 +14,10 @@ export const state = () => ({
     showAlert: 0,
     color: "",
     cart: [],
-    loginRedirectUrl: ''
+    loginRedirectUrl: '', 
+    category: "all",
+    searchText: "",
+    caps: [],
 })
 
 export const mutations = {
@@ -51,6 +54,27 @@ export const mutations = {
     },
     resetTimer(state) {
         state.showAlert = 0;
+    },
+    setCaps(state, data) {
+        state.caps = data;
+    },
+    setCategory(state, data) {
+        state.category = data;
+    }
+}
+
+export const getters = {
+    caps(state) {
+        if (state.category != 'all') {
+            return state.caps.filter((item) => {
+                return item.category == state.category;
+            });
+        }
+        return state.caps;
+    },
+
+    category(state) {
+        return state.category;
     }
 }
 
@@ -72,6 +96,16 @@ export const actions = {
         setTimeout(() => {
             context.commit('resetTimer');
         }, data.showAlert);
+    },
+
+    async getItems(context) {
+        try {
+          let response = await fetch('http://localhost:3000/api/item');
+          let json = await response.json()
+          context.commit('setCaps', json);
+        } catch (err) {
+          console.log(err);
+        }
     },
 
 

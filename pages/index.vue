@@ -1,7 +1,13 @@
 <template>
-  <div class="container">
+  <div class="container-main">
     <div>
-      <Banner />
+      <Hero/>
+      <h1 class="cap-text">Choose your style of cap.</h1>
+      <CapType class="cap-type" />
+      <div class="category-container">
+          <h3 class="category">Displaying category: {{this.$store.getters['category']}}</h3>
+      </div>
+      <hr>
       <cap-list />
     </div>
   </div>
@@ -9,26 +15,23 @@
 
 <script>
 import CapList from '../components/caps/CapList.vue'
-import Banner from '../components/shared/Banner'
+import Hero from '../components/shared/Hero'
+import CapType from '../components/shared/CapType'
 export default {
-  // async asyncData({ params, $http }) {
-  //   const post = await $http.$get(`https://api.nuxtjs.dev/posts/${params.id}`)
-  //   return { post }
-  // }
   components: {
     CapList,
-    Banner,
+    Hero,
+    CapType,
   },
 }
 </script>
 
-<style>
-.container {
+<style scoped>
+.container-main {
   margin: 0 auto;
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
   text-align: center;
 }
 
@@ -53,4 +56,28 @@ export default {
 .links {
   padding-top: 15px;
 }
+
+.cap-type {
+  margin: 2rem 0;
+}
+
+.cap-text {
+  margin-top: 2rem;
+}
+
+.category-container {
+  padding-left: 5%;
+}
+
+.category {
+  text-align: left;
+  text-transform: capitalize;
+}
+
+@media only screen and (max-width: 550px) {
+  .cap-text {
+    font-size: 1.5rem;
+  }
+}
+
 </style>

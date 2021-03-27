@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="dark" variant="info">
+    <b-navbar toggleable="lg" type="dark" variant="dark">
       <b-navbar-brand href="#">
         <nuxt-link to="/">
           <img src="~/assets/images/icons/cap-logo.png" alt="" />
