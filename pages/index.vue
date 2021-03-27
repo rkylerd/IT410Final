@@ -4,7 +4,7 @@
       <Hero/>
       <h1 class="cap-text">Choose your style of cap.</h1>
       <CapType class="cap-type" />
-      <div class="category-container">
+      <div class="category-container" id="caplist">
           <h3 class="category">Displaying category: {{this.$store.getters['category']}}</h3>
       </div>
       <hr>

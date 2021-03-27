@@ -46,13 +46,22 @@ export const mutations = {
         //make sure we don't add something that is already in the cart
         if (state.cart.length != 0) {
             for (let i = 0; i < state.cart.length; i++) {
-                if (state.cart.item.id == data.item.id) {
-                    state.cart.qty += data.qty;
-                    break;
+                if (state.cart[i].item.name == data.item.name) {
+                    state.cart[i].qty += data.qty;
+                    return;
                 }
             }
-        } else {
-            state.cart.push(data);
+        }
+        state.cart.push(data);
+        return;
+    },
+    removeCart(state, data) {
+        //check cart for item and remove it
+        for (let i = 0; i < state.cart.length; i++) {
+            if (state.cart[i].item.name == data) {
+                state.cart.splice(i, 1);
+                break;
+            }
         }
     },
     setShowAlert(state, data) {
@@ -91,6 +100,10 @@ export const getters = {
 
     category(state) {
         return state.category;
+    },
+
+    cart(state) {
+        return state.cart;
     }
 }
 

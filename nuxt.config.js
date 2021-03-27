@@ -26,6 +26,7 @@ export default {
       src: '~/plugins/vue-flip',
       mode: 'client'
     },
+
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

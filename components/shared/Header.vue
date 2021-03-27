@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="content">
     <b-navbar toggleable="lg" type="dark" variant="dark">
       <b-navbar-brand href="#">
         <nuxt-link to="/">
@@ -35,6 +35,12 @@
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
+          <nuxt-link to="/cart">
+            <div class="icon-cart">
+            <img src="~/assets/images/icons/cart.png" alt="">
+            <p class="cart-cnt">{{this.$store.getters['cart'].length}}</p>
+          </div>
+          </nuxt-link>
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
             <template #button-content>
@@ -90,3 +96,34 @@ export default Vue.extend({
   },
 })
 </script>
+
+
+<style scoped>
+
+.content {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 500;
+}
+
+.icon-cart {
+  background-color: #fff;
+  width: fit-content;
+  border-radius: 40px;
+  padding: .9rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.cart-cnt {
+  position: absolute;
+  color: #1e81b0;
+  top: -4%;
+  right: 40%;
+  z-index: 200;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+</style>

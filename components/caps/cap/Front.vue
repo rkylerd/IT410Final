@@ -14,7 +14,7 @@
             </div>
         </div>
         <div>
-            <img class="cap-img" src="~/assets/images/temp-cap.jpg" alt="">
+            <img class="cap-img" :src="getHatPic(cap.imageUrl)" alt="">
         </div>
         <div>
             <p class="cap-name">{{cap.name}}</p>
@@ -32,6 +32,9 @@ export default {
     methods: {
         getImgUrl(pic) {
             return require('~/assets/images/icons/'+pic+'.png');
+        },
+        getHatPic(pic) {
+            return require('~/assets/images/'+pic+'.jpg');
         }
     }
 }

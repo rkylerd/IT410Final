@@ -7,12 +7,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+
 import CartList from '../../components/cart-comp/CartList';
 export default {
-    computed: mapState([
-    'cart'
-  ]),
   components: {
       CartList,
   },

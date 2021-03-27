@@ -59,6 +59,7 @@ export default {
                 });
                 this.$refs.addbtn.innerText = "Remove";
             } else {
+                this.$store.commit('removeCart', this.cap.name);
                 this.$refs.addbtn.innerText = "Add";
             }
         },

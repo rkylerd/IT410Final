@@ -7,7 +7,9 @@
             <div class="hero-caption" id="hero-2">
                 <div class="hero-caption-text">
                     <h1>Welcome to Caps</h1>
-                    <b-btn variant="primary" size="lg">Find your Cap</b-btn>
+                    <a href="#caplist">
+                        <b-btn  variant="primary" size="lg">Find your Cap</b-btn>
+                    </a>
                 </div>
                 <img class="hero-img" src="~/assets/images/hero2.jpg" alt="Hero image">
             </div>
@@ -18,6 +20,12 @@
     </div>
 </template>
 
+<script>
+
+export default {
+    
+}
+</script>
 
 <style scoped>
 
@@ -51,8 +59,8 @@
 
 @media only screen and (max-width: 500px) {
     .hero-caption-text {
-        top: 18%;
-        
+        top: 50%;
+        left: 13%;
     }
 
     .hero-caption-text h1 {
