@@ -15,10 +15,11 @@
           "
         />
         <input-field
-          name="password"
           :value="password"
+          name="password"
           labelName="Password"
           :hint="inputValidation"
+          type="password"
           @changed="
             (password) => {
               this.password = password

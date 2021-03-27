@@ -60,7 +60,10 @@
                 >Sign Out</b-dropdown-item
               >
             </template>
-            <b-dropdown-item v-else href="/login">Sign In</b-dropdown-item>
+            <template v-else>
+              <b-dropdown-item href="/signup">Sign Up</b-dropdown-item>
+              <b-dropdown-item href="/login">Sign In</b-dropdown-item>
+            </template>
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>

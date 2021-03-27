@@ -28,17 +28,21 @@ export default {
     const token = localStorage.getItem('token') || ''
 
     if (token) {
-      const {
-        data: { addresses = [], email, username },
-      } = await this.$axios.get('/api/user/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      const user = { username, email, addresses }
+      try {
+        const {
+          data: { addresses = [], email, username },
+        } = await this.$axios.get('/api/user/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        const user = { username, email, addresses }
 
-      this.$store.dispatch('setUser', user)
-      this.$store.dispatch('setAuth', token)
+        this.$store.dispatch('setUser', user)
+        this.$store.dispatch('setAuth', token)
+      } catch (err) {
+        this.$store.dispatch('setAuth', '')
+      }
     }
   },
 }

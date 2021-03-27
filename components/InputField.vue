@@ -10,8 +10,22 @@
       :id="name"
       v-model="inputVal"
       :state="state"
+      :type="
+        type !== 'password' ? type : showPassword === 'Hide' ? 'text' : type
+      "
+      @blur="inputVal = inputVal"
       trim
     ></b-form-input>
+    <b-form-checkbox
+      id="password-toggle"
+      v-if="type === 'password'"
+      v-model="showPassword"
+      name="password-toggle"
+      value="Hide"
+      unchecked-value="Show"
+    >
+      Show Password
+    </b-form-checkbox>
   </b-form-group>
 </template>
 
@@ -19,7 +33,7 @@
 export default {
   computed: {
     state() {
-      return !this.watchInvalid || this.name.length > 0
+      return !this.watchInvalid || this.value.length > 0
     },
     invalid() {
       return this.hint
@@ -30,6 +44,7 @@ export default {
       },
       set(val) {
         !this.watchInvalid && (this.watchInvalid = true)
+        console.log(this.watchInvalid)
         this.$emit('changed', val)
       },
     },
@@ -37,6 +52,7 @@ export default {
   data() {
     return {
       watchInvalid: false,
+      showPassword: 'Show',
     }
   },
   props: {
@@ -45,6 +61,10 @@ export default {
     },
     value: {
       type: String,
+    },
+    type: {
+      type: String,
+      default: 'text',
     },
     labelName: {
       type: String,
