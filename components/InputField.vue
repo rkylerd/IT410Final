@@ -4,12 +4,12 @@
     :label="`${labelName}`"
     :label-for="name"
     :invalid-feedback="invalid"
-    :state="state"
+    :state="isValid"
   >
     <b-form-input
       :id="name"
       v-model="inputVal"
-      :state="state"
+      :state="isValid"
       :type="
         type !== 'password' ? type : showPassword === 'Hide' ? 'text' : type
       "
@@ -32,8 +32,8 @@
 <script>
 export default {
   computed: {
-    state() {
-      return !this.watchInvalid || this.value.length > 0
+    isValid() {
+      return !this.required || !this.watchInvalid || this.value.length > 0
     },
     invalid() {
       return this.hint
@@ -44,7 +44,6 @@ export default {
       },
       set(val) {
         !this.watchInvalid && (this.watchInvalid = true)
-        console.log(this.watchInvalid)
         this.$emit('changed', val)
       },
     },
@@ -58,9 +57,11 @@ export default {
   props: {
     name: {
       type: String,
+      default: 'name',
     },
     value: {
       type: String,
+      default: '',
     },
     type: {
       type: String,
@@ -68,13 +69,22 @@ export default {
     },
     labelName: {
       type: String,
+      default: 'Label',
     },
     hint: {
       type: String,
+      default: '*Required Input',
+    },
+    required: {
+      type: String,
+      default: false,
     },
   },
 }
 </script>
 
 <style>
+.form-group {
+  min-height: 95px;
+}
 </style>

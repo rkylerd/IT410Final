@@ -21,7 +21,7 @@
     "username": "string",
     "password": "string",
     "name": "string",
-    "phone": "number",
+    "phone": "string",
     "email": "string",
     "address": "array"
 }
@@ -31,7 +31,7 @@
     "username": "string",
     "password": "string",
     "name": "string",
-    "phone": "number",
+    "phone": "string",
     "email": "string",
     "address": "array",
     "orderHistory": "array",
@@ -41,14 +41,14 @@
 //set guest info
 {
     "email": "string",
-    "phone": "number"
+    "phone": "string"
 }
  
 //get guest info
 {
     "id": "string",
     "email": "string",
-    "phone": "number",
+    "phone": "string",
     "orderHistory": "array",
     "totalRevenua": "number"
 }

@@ -1,14 +1,14 @@
 import Address from '../models/Address'
 
 interface User {
-    _id: string,
-    username: string,
-    email: string,
-    password: string,
-    fname: string,
-    lname: string,
-    phone: number,
-    addresses: Array<Address> 
-  }
+  _id: string,
+  username: string,
+  email: string,
+  password: string,
+  fName: string,
+  lName: string,
+  phone: string,
+  addresses: Array<Address>
+}
 
-  export default User;
+export default User;

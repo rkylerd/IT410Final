@@ -92,7 +92,7 @@ export default Vue.extend({
           }
         )
         this.$store.dispatch('setAuth', '')
-        this.$store.dispatch('setUser', {})
+        this.$store.dispatch('setUser', undefined)
         this.$router.replace('/login')
       } catch (err) {
         console.log(err.response.data)
