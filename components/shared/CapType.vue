@@ -31,6 +31,7 @@
 export default {
     methods: {
         changeType(data) {
+            this.$store.commit('setSearchText', "");
             this.$store.commit('setCategory', data);
         }
     }

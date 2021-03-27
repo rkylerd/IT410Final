@@ -8,6 +8,12 @@
           <h3 class="category">Displaying category: {{this.$store.getters['category']}}</h3>
       </div>
       <hr>
+      
+        <b-form class="search-container" @submit.prevent="search()">
+          <b-form-input v-model="searchText" placeholder="baseball, beanies, top-hats"></b-form-input>
+          <b-button variant="outline-primary" type="submit">Search</b-button>
+        </b-form>
+      
       <cap-list />
     </div>
   </div>
@@ -23,6 +29,19 @@ export default {
     Hero,
     CapType,
   },
+
+  data() {
+    return {
+      searchText: "",
+    }
+  },
+
+  methods: {
+    search() {
+      this.$store.commit('setCategory', 'all');
+      this.$store.commit('setSearchText', this.searchText);
+    }
+  }
 }
 </script>
 
@@ -74,9 +93,22 @@ export default {
   text-transform: capitalize;
 }
 
+.search-container {
+  width: 50%;
+  padding-left: 5%;
+  display: flex;
+}
+
 @media only screen and (max-width: 550px) {
   .cap-text {
     font-size: 1.5rem;
+  }
+
+  .search-container {
+    width: 90%;
+    padding-left: 0;
+    padding: 0 5%;
+    margin: 0 auto;
   }
 }
 

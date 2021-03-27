@@ -61,11 +61,19 @@ export const mutations = {
     },
     setCategory(state, data) {
         state.category = data;
+    },
+    setSearchText(state, data) {
+        state.searchText = data;
     }
 }
 
 export const getters = {
     caps(state) {
+        if (state.searchText != "") {
+            return state.caps.filter((item) => {
+                return item.name.toLowerCase().includes(state.searchText.toLowerCase());
+            })
+        }
         if (state.category != 'all') {
             return state.caps.filter((item) => {
                 return item.category == state.category;
