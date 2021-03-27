@@ -81,7 +81,7 @@ const controllersPath = path.resolve(__dirname, 'controllers')
 app.use(enforcerMiddleware.route(controllersPath, dependencies))
 
 if (require.main === module) {
-  app.listen(PORT || 3001, () => {
+  app.listen(PORT, () => {
     console.log(`API server listening on port ${PORT}`)
   })
 }

@@ -14,7 +14,18 @@ export default {
   components: {
     Cap,
   },
-  computed: mapState(['caps']),
+  
+  computed: {
+    caps() {
+      return this.$store.getters['caps'];
+    }
+  },
+  methods: {
+    
+  },
+  async mounted() {
+    await this.$store.dispatch('getItems');
+  },
 }
 </script>
 
