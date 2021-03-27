@@ -1,28 +1,26 @@
 <template>
   <div>
     <section>
-      <form>
+      <form @keyup.enter="login">
         <h1>Login</h1>
         <input-field
-          :name="username"
+          name="username"
+          :value="this.username"
           labelName="Username"
-          :watchInvalid="usernameAttempted"
           :hint="inputValidation"
           @changed="
             (uname) => {
-              !this.usernameAttempted && (this.usernameAttempted = true)
               this.username = uname
             }
           "
         />
         <input-field
-          :name="password"
+          name="password"
+          :value="password"
           labelName="Password"
-          :watchInvalid="passwordAttempted"
           :hint="inputValidation"
           @changed="
             (password) => {
-              !this.passwordAttempted && (this.passwordAttempted = true)
               this.password = password
             }
           "
@@ -46,8 +44,6 @@ export default {
   components: { InputField },
   data() {
     return {
-      usernameAttempted: false,
-      passwordAttempted: false,
       username: '',
       password: '',
       inputValidation: '*Required field',
@@ -57,18 +53,20 @@ export default {
   methods: {
     async login() {
       try {
-        const {
-          headers: { authorization: auth = 'Bearer ' } = {},
-        } = await this.$axios.put('/api/user/login', {
+        const user = {
           username: this.username,
           password: this.password,
-        })
+        }
+
+        const {
+          headers: { authorization: auth = 'Bearer ' } = {},
+        } = await this.$axios.put('/api/user/login', user)
 
         const jwt = auth.split(' ')[1] || ''
         if (jwt) {
           this.$store.dispatch('setAuth', jwt)
+          this.$store.dispatch('setUser', user)
           this.$router.push({ path: '/' })
-        } else {
         }
       } catch (err) {
         const {

@@ -22,6 +22,7 @@ export const state = () => ({
 
 export const mutations = {
     setAuth(state, jwt = "") {
+        window.localStorage.setItem('token', jwt);
         state.jwt = jwt;
     },
     setUser(state, user) {

@@ -28,7 +28,6 @@ export default {
       console.log('error', err)
     }
   },
-  computed: mapState(['jwt']),
 }
 </script>
 

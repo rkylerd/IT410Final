@@ -8,9 +8,8 @@
   >
     <b-form-input
       :id="name"
-      v-model="value"
+      v-model="inputVal"
       :state="state"
-      @blur="handleChange"
       trim
     ></b-form-input>
   </b-form-group>
@@ -20,31 +19,35 @@
 export default {
   computed: {
     state() {
-      return !this.watchInvalid || this.value.length > 0
+      return !this.watchInvalid || this.name.length > 0
     },
     invalid() {
       return this.hint
     },
+    inputVal: {
+      get() {
+        return this.value
+      },
+      set(val) {
+        !this.watchInvalid && (this.watchInvalid = true)
+        this.$emit('changed', val)
+      },
+    },
   },
   data() {
     return {
-      value: this.name,
+      watchInvalid: false,
     }
-  },
-  methods: {
-    handleChange({ target: { value = '' } = {} } = {}) {
-      this.$emit('changed', value)
-    },
   },
   props: {
     name: {
       type: String,
     },
-    labelName: {
+    value: {
       type: String,
     },
-    watchInvalid: {
-      type: Boolean,
+    labelName: {
+      type: String,
     },
     hint: {
       type: String,
