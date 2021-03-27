@@ -20,14 +20,14 @@ export default function (
         return true;
     }
 
-    const addJwtToHeader = (user: typeof User, res: Response) => {
+    const addJwtToHeader = (user: typeof User, res: Response, statusCode = 200) => {
         let token = generateToken({ username: user.username, role: user.role });
 
         user.removeOldTokens();
         user.addToken(token);
         user.save();
 
-        res.set("Authorization", `Bearer ${token}`).sendStatus(200).enforcer;
+        res.set("Authorization", `Bearer ${token}`).sendStatus(statusCode).enforcer;
     };
 
     return {
@@ -51,7 +51,9 @@ export default function (
                     res.status(400).send(new CustomError(`username, password, and email are required fields.`, 400));
                     return;
                 }
-                if (await User.findOne({ username })) {
+
+                const reservedUsernames = ['me'];
+                if (reservedUsernames.includes(username) || await User.findOne({ username })) {
                     res.status(400).send(new CustomError(`Select another username.`, 400));
                     return;
                 }
@@ -60,8 +62,9 @@ export default function (
                     username,
                     password,
                     email,
-                    rest
+                    ...rest
                 });
+
                 await newUser.save();
                 addJwtToHeader(newUser, res);
             } catch (err) {
@@ -161,16 +164,23 @@ export default function (
                     let user = await User.findOne({ username });
                     if (!user) {
                         res.status(404).send(new CustomError(`User with username '${username}' not found.`, 404));
+                        return;
                     }
 
                     if (isTokenMine(req, res, user)) {
                         // ensure we only update the following properties
                         const {
-                            username: uname, email, password, fname, lname, phone, addresses
+                            username: uname, email, password, fName, lName, phone, addresses
                         } = req.enforcer.body;
 
+                        let existingUser = await User.findOne({ username: uname });
+                        if (existingUser) {
+                            res.status(400).send(new CustomError(`Select another username. '${uname}' has already been taken.`, 400));
+                            return;
+                        }
+
                         const fieldsToUpdate = {
-                            username: uname, email, password, fname, lname, phone, addresses
+                            username: uname, email, password, fName, lName, phone, addresses
                         };
 
                         Object.entries(fieldsToUpdate).forEach(([k, v]) => {
@@ -180,8 +190,12 @@ export default function (
                             }
                         });
 
-                        user.save();
-                        res.sendStatus(204);
+                        await user.save();
+                        if (fieldsToUpdate.username) {
+                            addJwtToHeader(user, res, 204);
+                        } else {
+                            res.sendStatus(204);
+                        }
                     }
                 } catch (err) {
                     console.log('ERROR---updateUser', err);

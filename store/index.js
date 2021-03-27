@@ -14,7 +14,7 @@ export const state = () => ({
     showAlert: 0,
     color: "",
     cart: [],
-    loginRedirectUrl: '', 
+    loginRedirectUrl: '',
     category: "all",
     searchText: "",
     caps: [],
@@ -26,10 +26,17 @@ export const mutations = {
         state.jwt = jwt;
     },
     setUser(state, user) {
-        state.user = user;
-    },
-    updateUser(state, user) {
-        state.user = { ...state.user, ...user };
+
+        state.user = user ?
+            { ...state.user, ...user } :
+            {
+                username: "",
+                email: "",
+                fName: "",
+                lName: "",
+                phone: "",
+                addresses: []
+            };
     },
     increment(state) {
         state.counter++
@@ -96,10 +103,6 @@ export const actions = {
         context.commit('setUser', user);
     },
 
-    updateUser(context, user) {
-        context.commit('updateUser', user);
-    },
-
     setAlert(context, data) {
         context.commit('setShowAlert', data);
         setTimeout(() => {
@@ -109,11 +112,11 @@ export const actions = {
 
     async getItems(context) {
         try {
-          let response = await fetch('http://localhost:3000/api/item');
-          let json = await response.json()
-          context.commit('setCaps', json);
+            let response = await fetch('http://localhost:3000/api/item');
+            let json = await response.json()
+            context.commit('setCaps', json);
         } catch (err) {
-          console.log(err);
+            console.log(err);
         }
     },
 

@@ -8,8 +8,8 @@ export default function (mongoose: any, bcrypt: any, removeOldTokens: Function) 
         },
         email: String,
         password: String,
-        fname: String,
-        lname: String,
+        fName: String,
+        lName: String,
         phone: String,
         addresses: [],
         tokens: []
@@ -28,8 +28,8 @@ export default function (mongoose: any, bcrypt: any, removeOldTokens: Function) 
     }
 
     userSchema.methods.stripSenstiveFields = function () {
-        const { username, email, addresses } = this.toObject();
-        return { username, email, addresses };
+        const { username, email, fName, lName, phone, addresses } = this.toObject();
+        return { username, email, fName, lName, phone, addresses };
     }
 
     userSchema.pre('save', async function (next: Function) {

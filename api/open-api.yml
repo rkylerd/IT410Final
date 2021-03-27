@@ -649,12 +649,12 @@ components:
             password:
               type: string
               writeOnly: true
-            fname:
+            fName:
               type: string
-            lname:
+            lName:
               type: string
             phone:
-              type: number
+              type: string
             addresses:
               type: array
               items:    

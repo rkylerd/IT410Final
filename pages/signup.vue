@@ -3,59 +3,19 @@
     <section>
       <form @keyup.enter="signup">
         <h1>Sign Up</h1>
+
         <input-field
-          :value="username"
-          name="username"
-          labelName="Username"
+          v-for="(field, idx) in signupFields"
+          :key="idx"
+          :value="self[field.field]"
+          :name="field.field"
+          :type="field.type ? field.type : 'text'"
+          :labelName="field.label"
           :hint="inputValidation"
+          :required="true"
           @changed="
-            (uname) => {
-              this.username = uname
-            }
-          "
-        />
-        <input-field
-          :value="email"
-          name="email"
-          labelName="Email"
-          :hint="inputValidation"
-          @changed="
-            (email) => {
-              this.email = email
-            }
-          "
-        />
-        <input-field
-          :value="password"
-          name="password"
-          labelName="Password"
-          :hint="inputValidation"
-          type="password"
-          @changed="
-            (password) => {
-              this.password = password
-            }
-          "
-        />
-        <input-field
-          :value="fName"
-          name="first name"
-          labelName="First Name"
-          :hint="inputValidation"
-          @changed="
-            (fName) => {
-              this.fName = fName
-            }
-          "
-        />
-        <input-field
-          name="last name"
-          :value="lName"
-          labelName="Last Name"
-          :hint="inputValidation"
-          @changed="
-            (lName) => {
-              this.lName = lName
+            (value) => {
+              self[field.field] = value
             }
           "
         />
@@ -84,7 +44,15 @@ export default {
       fName: '',
       lName: '',
       inputValidation: '*Required field',
+      signupFields: [
+        { field: 'username', label: 'Username' },
+        { field: 'email', label: 'Email' },
+        { field: 'password', label: 'Password', type: 'password' },
+        { field: 'fName', label: 'First Name' },
+        { field: 'lName', label: 'Last Name' },
+      ],
       error: '',
+      self: this,
     }
   },
   methods: {
@@ -122,6 +90,10 @@ export default {
 </script>
 
 <style>
+.form-group {
+  margin-bottom: 0;
+}
+
 section form {
   max-width: 400px;
   margin: 10px auto;
