@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     <section>
       <form @keyup.enter="login">
         <h1>Login</h1>
@@ -8,6 +8,7 @@
           :value="this.username"
           labelName="Username"
           :hint="inputValidation"
+          :required="true"
           @changed="
             (uname) => {
               this.username = uname
@@ -20,6 +21,7 @@
           labelName="Password"
           :hint="inputValidation"
           type="password"
+          :required="true"
           @changed="
             (password) => {
               this.password = password

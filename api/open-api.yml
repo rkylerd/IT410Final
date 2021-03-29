@@ -732,7 +732,7 @@ components:
           state:
             type: string
           zip:
-            type: number
+            type: string
       Image:
         type: object
         properties:

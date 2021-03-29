@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="page">
     <section>
       <form @keyup.enter="signup">
         <h1>Sign Up</h1>

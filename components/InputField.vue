@@ -13,6 +13,12 @@
       :type="
         type !== 'password' ? type : showPassword === 'Hide' ? 'text' : type
       "
+      @focus="
+        !watchInvalid &&
+          type === 'password' &&
+          autoPopulatePassword &&
+          (inputVal = '')
+      "
       @blur="inputVal = inputVal"
       trim
     ></b-form-input>
@@ -40,7 +46,11 @@ export default {
     },
     inputVal: {
       get() {
-        return this.value
+        return !this.watchInvalid &&
+          this.type === 'password' &&
+          this.autoPopulatePassword
+          ? 'hidden-password'
+          : this.value
       },
       set(val) {
         !this.watchInvalid && (this.watchInvalid = true)
@@ -67,6 +77,10 @@ export default {
       type: String,
       default: 'text',
     },
+    autoPopulatePassword: {
+      type: Boolean,
+      default: false,
+    },
     labelName: {
       type: String,
       default: 'Label',
@@ -76,7 +90,7 @@ export default {
       default: '*Required Input',
     },
     required: {
-      type: String,
+      type: Boolean,
       default: false,
     },
   },
@@ -84,7 +98,7 @@ export default {
 </script>
 
 <style>
-.form-group {
+/* .form-group {
   min-height: 95px;
-}
+} */
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex">
+  <div class="page flex">
     <section class="left-nav side">
       <h3>Profile Settings</h3>
       <div
@@ -9,6 +9,13 @@
           () => {
             indexOfCurrField = idx
             inputVal = user[field.field]
+            isSaveDisabled = true
+            // create dynamic vm fields if working with embedded fields (i.e. addresses)
+            if ({ ...fieldsToUpdate[idx] }.embeddedFields) {
+              ;[...embeddedFields[fieldsToUpdate[idx].field]].forEach(
+                (field) => self[{ ...fieldsToUpdate[idx] }.field]
+              )
+            }
           }
         "
       >
@@ -18,6 +25,8 @@
     <section class="center">
       <div class="content">
         <input-field
+          v-if="!computedEmbeddedField"
+          style="min-height: 95px"
           :name="fieldsToUpdate[indexOfCurrField].field"
           :labelName="fieldsToUpdate[indexOfCurrField].label"
           :value="inputVal"
@@ -26,11 +35,38 @@
               ? fieldsToUpdate[indexOfCurrField].type
               : 'text'
           "
-          @changed="(value) => (this.inputVal = value)"
+          @changed="
+            (value) => {
+              inputVal = value
+              toggleIsSaveDisabled()
+            }
+          "
         >
         </input-field>
+
+        <template v-else>
+          <input-field
+            v-for="(field, idx) in embeddedFields[computedEmbeddedField]"
+            :key="idx"
+            :name="field.field"
+            :labelName="field.label"
+            :value="self[field.field]"
+            @changed="
+              (value) => {
+                self[field.field] = value
+                toggleIsSaveDisabled()
+              }
+            "
+          >
+          </input-field>
+        </template>
+
         <b-row>
-          <b-button variant="outline-primary" id="login" @click="updateUser"
+          <b-button
+            :disabled="isSaveDisabled"
+            variant="outline-primary"
+            id="login"
+            @click="updateUser"
             >Save</b-button
           >
         </b-row>
@@ -47,8 +83,12 @@ import InputField from '../components/InputField.vue'
 export default {
   data() {
     return {
+      self: this,
+      isSaveDisabled: true,
       value: undefined,
+      valueObj: {},
       user: {},
+      indexOfCurrField: 0,
       fieldsToUpdate: [
         { field: 'username', label: 'Username' },
         { field: 'email', label: 'Email' },
@@ -56,23 +96,84 @@ export default {
         { field: 'password', label: 'Password', type: 'password' },
         { field: 'fName', label: 'First Name' },
         { field: 'lName', label: 'Last Name' },
-        { field: 'addresses', label: 'Address List' },
+        {
+          field: 'addresses',
+          label: 'Address List',
+          embeddedFields: 'address',
+        },
       ],
-      indexOfCurrField: 0,
+      embeddedFieldIndex: 0,
+      embeddedFields: {
+        address: [
+          {
+            field: 'street1',
+            label: `Street Address`,
+          },
+          {
+            field: 'street2',
+            label: `Street Address 2`,
+          },
+          {
+            field: 'city',
+            label: `City`,
+          },
+          {
+            field: 'state',
+            label: `State`,
+          },
+          {
+            field: 'zip',
+            label: `Zip Code`,
+          },
+        ],
+      },
     }
   },
   async mounted() {
     await this.getUser()
   },
   methods: {
+    toggleIsSaveDisabled() {
+      const embeddedFieldKey = this.computedEmbeddedField
+
+      if (embeddedFieldKey) {
+        this.isSaveDisabled = Object.values({
+          ...this.embeddedFields[embeddedFieldKey],
+        }).some(({ field: key }) => {
+          return !self[key].value
+        })
+      } else {
+        this.isSaveDisabled = !this.value || !this.value.length
+      }
+    },
+    constructUpdateBody(embeddedField) {
+      // if embedded field exists such as addresses,
+      // construct a request body object from the vm's dynamic fields created on the fly
+      return embeddedField
+        ? {
+            [this.fieldsToUpdate[this.indexOfCurrField].field]: [
+              [...this.embeddedFields[embeddedField]].reduce(
+                (acc, { field: next = '' }) => {
+                  acc[next] = self[next].value
+                  return acc
+                },
+                {}
+              ),
+            ],
+          }
+        : { [this.fieldsToUpdate[this.indexOfCurrField].field]: this.value }
+    },
     async updateUser() {
       try {
+        const embeddedField = this.fieldsToUpdate[this.indexOfCurrField]
+          .embeddedFields
+        const updatedField = this.constructUpdateBody(embeddedField)
         const jwt = this.$store.state.jwt
 
         // perform update
         const resp = await this.$axios.put(
           `/api/user/${this.$store.state.user.username}`,
-          { [this.fieldsToUpdate[this.indexOfCurrField].field]: this.value },
+          updatedField,
           {
             headers: { Authorization: `Bearer ${jwt}` },
           }
@@ -88,12 +189,23 @@ export default {
           }
         }
 
-        // update the local store user
-        this.$store.dispatch('setUser', {
-          [this.fieldsToUpdate[this.indexOfCurrField].field]: this.value,
-        })
+        this.updateLocalUser(embeddedField, updatedField)
       } catch (err) {
-        console.log('error', err.response.data)
+        console.log('error', err)
+      }
+    },
+    updateLocalUser(embeddedField = '', updatedField = {}) {
+      // update the local store user
+      this.$store.dispatch('setUser', updatedField)
+
+      // update local user for page
+      if (embeddedField) {
+        const fields = Object.values(updatedField)[0][this.embeddedFieldIndex]
+        Object.entries(fields).forEach(([key, value]) => {
+          this[key] = value
+        })
+      } else {
+        this.user = { ...this.user, ...updatedField }
       }
     },
     async getUser() {
@@ -102,20 +214,29 @@ export default {
         if (!jwt) {
           this.$router.replace('/login')
         }
-        const { data: user } = await this.$axios.get('/api/user/me', {
+        const {
+          data: { addresses = [], ...restOfUser },
+        } = await this.$axios.get('/api/user/me', {
           headers: { Authorization: `Bearer ${jwt}` },
         })
 
-        this.user = user
+        const { street1 = '', street2 = '', city = '', state = '', zip = '' } =
+          addresses[0] || {}
+        this.street1 = street1
+        this.street2 = street2
+        this.city = city
+        this.state = state
+        this.zip = zip
+        this.user = restOfUser
       } catch (err) {
-        console.log('error', err.response.data)
-        if (err.response.data.status === 401) {
-          this.$router.replace('/login')
-        }
+        console.log('error', err)
       }
     },
   },
   computed: {
+    computedEmbeddedField() {
+      return this.fieldsToUpdate[this.indexOfCurrField].embeddedFields
+    },
     inputVal: {
       get() {
         return this.value === undefined
@@ -166,11 +287,12 @@ section.left-nav {
 }
 
 section.left-nav h3 {
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  background-color: rgb(60, 140, 172);
+  color: white;
   text-align: center;
-  /* background-color: darkgray;
-  margin: 0;
-  padding: 1em 0; */
-  padding-bottom: 0.5em;
+  padding: 0.5em 0;
   margin-bottom: 0;
   border-bottom: 1px solid black;
 }

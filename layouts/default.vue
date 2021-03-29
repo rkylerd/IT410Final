@@ -70,6 +70,9 @@ div#__layout {
 div#template {
   min-height: 100%;
 }
+.page {
+  margin-top: 5rem;
+}
 
 *,
 *::before,

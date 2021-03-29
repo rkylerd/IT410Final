@@ -8,7 +8,15 @@ export const state = () => ({
         fName: "",
         lName: "",
         phone: "",
-        addresses: []
+        addresses: [
+            {
+                street1: '',
+                street2: '',
+                city: '',
+                state: '',
+                zip: ''
+            },
+        ]
     },
     alertMsg: "",
     showAlert: 0,
@@ -26,7 +34,6 @@ export const mutations = {
         state.jwt = jwt;
     },
     setUser(state, user) {
-
         state.user = user ?
             { ...state.user, ...user } :
             {
