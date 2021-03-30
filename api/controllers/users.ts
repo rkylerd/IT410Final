@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import CustomError from '../models/Error'
+import CartItem from '../models/CartItem';
 
 export default function (
     bcrypt: any,
@@ -170,17 +171,20 @@ export default function (
                     if (isTokenMine(req, res, user)) {
                         // ensure we only update the following properties
                         const {
-                            username: uname, email, password, fName, lName, phone, addresses
+                            username: uname, email, password, fName, lName, phone, addresses, cart
                         } = req.enforcer.body;
 
-                        let existingUser = await User.findOne({ username: uname });
-                        if (existingUser) {
-                            res.status(400).send(new CustomError(`Select another username. '${uname}' has already been taken.`, 400));
-                            return;
+                        // If user is attempting to update his/her username, ensure the new username isn't already taken
+                        if (uname) {
+                            let existingUser = await User.findOne({ username: uname });
+                            if (existingUser) {
+                                res.status(400).send(new CustomError(`Select another username. '${uname}' has already been taken.`, 400));
+                                return;
+                            }
                         }
 
                         const fieldsToUpdate = {
-                            username: uname, email, password, fName, lName, phone, addresses
+                            username: uname, email, password, fName, lName, phone, addresses, cart
                         };
 
                         Object.entries(fieldsToUpdate).forEach(([k, v]) => {
@@ -202,8 +206,67 @@ export default function (
                     res.sendStatus(500);
                 }
             }
-        }
+        },
+        async addToUserCart(req: Request, res: Response) {
+            const { username = "" } = req.enforcer.params;
+            if (await isTokenValid(req, res, username)) {
+                try {
+                    let user = await User.findOne({ username });
+                    if (!user) {
+                        res.status(404).send(new CustomError(`User with username '${username}' not found.`, 404));
+                        return;
+                    }
 
+                    if (isTokenMine(req, res, user)) {
+                        const {
+                            item
+                        } = req.enforcer.body;
+
+                        user.cart.push(item);
+
+                        await user.save();
+                        res.sendStatus(204);
+                    }
+                } catch (err) {
+                    console.log('ERROR---addToUserCart', err);
+                    res.sendStatus(500);
+                }
+            }
+        },
+        async removeFromUserCart(req: Request, res: Response) {
+            const { username = "", itemId = "", qty } = req.enforcer.params;
+            if (await isTokenValid(req, res, username)) {
+                try {
+                    let user = await User.findOne({ username });
+                    if (!user) {
+                        res.status(404).send(new CustomError(`User with username '${username}' not found.`, 404));
+                        return;
+                    }
+
+                    if (isTokenMine(req, res, user)) {
+
+                        const itemIndex = user.cart.findIndex((item: CartItem) => {
+                            item._id === itemId
+                        });
+
+                        if (itemIndex !== -1) {
+                            if (qty && user.cart[itemIndex].qty > qty) {
+                                user.cart[itemIndex].qty -= qty;
+                            } else {
+                                user.cart.splice(itemIndex, 1);
+                            }
+
+                            await user.save();
+                        }
+
+                        res.sendStatus(204);
+                    }
+                } catch (err) {
+                    console.log('ERROR---removeFromUserCart', err);
+                    res.sendStatus(500);
+                }
+            }
+        }
     }
 }
 

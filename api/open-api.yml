@@ -440,6 +440,71 @@ paths:
           description: "User not found"
         "500": 
           description: "Internal server error"
+  /api/cart/{username}:
+    post:
+      tags:
+      - "item"
+      summary: "Add a new item to the store"
+      description: ""
+      operationId: "addToUserCart"
+      x-controller: users
+      x-operation: addToUserCart
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/CartItem"
+      responses:
+        "201":
+          description: "Successfully added item to cart"
+        "500":
+          description: "Internal server error"
+        "403":
+          description: "User does not have permission to access this resource"
+        "401":
+          description: "Must authenticate"
+  /api/cart/{username}/{itemId}:
+    delete:
+      tags:
+      - "user"
+      summary: "Remove item(s) from cart"
+      description: "This can only be done by the logged in user."
+      operationId: "removeFromUserCart"
+      x-controller: users
+      x-operation: removeFromUserCart
+      security:
+        - bearerAuth: []
+      parameters:
+      - name: username
+        in: path
+        required: true
+        description: the user identifier, as username 
+        schema:
+          type: string
+      - name: itemId
+        in: path
+        required: true
+        description: the item identifier, as itemId 
+        schema:
+          type: string
+      - name: "qty"
+        in: "query"
+        description: "Quantity of the item to remove"
+        schema:
+          type: number
+      responses:
+        "400":
+          description: "Invalid username supplied"
+        "500":
+          description: "Internal server error"
+        "204":
+          description: "Item was removed from cart"
+        "403":
+          description: "Not authorized to delete from cart"
+        "401": 
+          description: "Must be logged in to perform action"
   /api/user/{username}:
     get:
       tags:
@@ -709,10 +774,10 @@ components:
           trackingId:
             type: string
             readOnly: true
-          # items:
-          #   type: array
-          #   items:
-          #     $ref: '#/components/schemas/Item'
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/CartItem'
           status:
             type: string
             readOnly: true
@@ -720,6 +785,20 @@ components:
           #     $ref: '#/components/schemas/Address'
           username:
             type: string
+      CartItem:
+          properties:
+            _id:
+              type: string
+            name:
+              type: string
+            price:
+              type: number
+            imageUrl:
+              type: string
+            qty: 
+              type: number
+            size: 
+              type: string
       Address:
         type: object
         properties:
