@@ -54,7 +54,7 @@ export const mutations = {
         if (state.cart.length != 0) {
             for (let i = 0; i < state.cart.length; i++) {
                 if (state.cart[i].item.name == data.item.name) {
-                    state.cart[i].qty += data.qty;
+                    state.cart[i].qty += parseInt(data.qty);
                     return;
                 }
             }

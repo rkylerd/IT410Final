@@ -1,7 +1,7 @@
 <template>
   <div id="template">
     <Header />
-    <Nuxt />
+    <Nuxt class="space" />
     <b-alert
       class="alert-notification"
       :show="showAlert"
@@ -9,7 +9,7 @@
       :variant="color"
       >{{ alertMsg }}</b-alert
     >
-    <Footer />
+    <Footer class="footer" />
   </div>
 </template>
 
@@ -69,6 +69,7 @@ div#__layout {
 }
 div#template {
   min-height: 100%;
+  position: relative;
 }
 .page {
   margin-top: 5rem;
@@ -116,4 +117,11 @@ div#template {
   width: 90%;
   left: 5%;
 }
+
+.footer {
+  position: relative;
+    width: 100%;
+    bottom: 0;
+}
+
 </style>
