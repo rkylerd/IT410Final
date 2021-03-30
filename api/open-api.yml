@@ -451,6 +451,13 @@ paths:
       x-operation: addToUserCart
       security:
         - bearerAuth: []
+      parameters:
+      - name: username
+        in: path
+        required: true
+        description: the user identifier, as username 
+        schema:
+          type: string
       requestBody:
         content:
           'application/json':
