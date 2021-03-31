@@ -45,34 +45,71 @@
         </input-field>
 
         <template v-else>
-          <input-field
-            v-for="(field, idx) in embeddedFields[computedEmbeddedField]"
-            :key="idx"
-            :name="field.field"
-            :labelName="field.label"
-            :value="self[field.field]"
-            @changed="
-              (value) => {
-                self[field.field] = value
-                toggleIsSaveDisabled()
-              }
-            "
-          >
-          </input-field>
+          <b-row>
+            <b-button
+              :disabled="isSaveDisabled"
+              variant="outline-primary"
+              id="update-user"
+              @click="updateUser"
+              >Save</b-button
+            >
+          </b-row>
+          <div class="accordion" role="tablist">
+            <b-card
+              v-for="(element, accordionIdx) in accordionElements"
+              :key="accordionIdx"
+              no-body
+              class="mb-2"
+            >
+              <b-card-header header-tag="header" class="p-1" role="tab">
+                <b-button
+                  block
+                  v-b-toggle="`accordion-${accordionIdx}`"
+                  variant="info"
+                  >{{ Object.values(element)[0] }}</b-button
+                >
+              </b-card-header>
+              <b-collapse
+                :id="`accordion-${accordionIdx}`"
+                visible
+                accordion="my-accordion"
+                role="tabpanel"
+              >
+                <b-card-body>
+                  <input-field
+                    v-for="(field, idx) in embeddedFields[
+                      computedEmbeddedField
+                    ]"
+                    :key="`${accordionIdx}-${idx}`"
+                    :myKey="`${accordionIdx}-${idx}`"
+                    :name="field.field"
+                    :labelName="field.label"
+                    :value="self[field.field]"
+                    @changed="
+                      (value) => {
+                        self[field.field] = value
+                        toggleIsSaveDisabled()
+                      }
+                    "
+                  >
+                  </input-field>
+                </b-card-body>
+              </b-collapse>
+            </b-card>
+          </div>
         </template>
 
         <b-row>
           <b-button
             :disabled="isSaveDisabled"
             variant="outline-primary"
-            id="login"
+            id="update-user"
             @click="updateUser"
             >Save</b-button
           >
         </b-row>
       </div>
     </section>
-    <section class="side"></section>
   </div>
 </template>
 
@@ -127,20 +164,48 @@ export default {
           },
         ],
       },
+      street1: '',
+      street2: '',
+      city: '',
+      state: '',
+      zip: '',
     }
   },
   async mounted() {
     await this.getUser()
+    this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
+      this.watchCollapsed(collapseId, isJustShown)
+    })
   },
   methods: {
+    watchCollapsed(collapseId, isJustShown) {
+      this.isSaveDisabled = true
+      if (!isJustShown) return
+      this.embeddedFieldIndex = +collapseId.split('-')[1]
+
+      const embeddedFieldsLength = (
+        this.user[this.fieldsToUpdate[this.indexOfCurrField].field] || []
+      ).length
+      const embeddedField = this.fieldsToUpdate[this.indexOfCurrField]
+        .embeddedFields
+      if (this.embeddedFieldIndex !== embeddedFieldsLength) {
+        const arr = [...this.embeddedFields[embeddedField]]
+        arr.forEach(({ field = '' }) => {
+          this[field] = this.user.addresses[this.embeddedFieldIndex][field]
+        }, {})
+      } else {
+        this.embeddedFields[embeddedField].forEach(({ field = '' }) => {
+          this[field] = ''
+        }, {})
+      }
+    },
     toggleIsSaveDisabled() {
       const embeddedFieldKey = this.computedEmbeddedField
-
       if (embeddedFieldKey) {
         this.isSaveDisabled = Object.values({
           ...this.embeddedFields[embeddedFieldKey],
         }).some(({ field: key }) => {
-          return !self[key].value
+          return !this[key]
         })
       } else {
         this.isSaveDisabled = !this.value || !this.value.length
@@ -149,22 +214,35 @@ export default {
     constructUpdateBody(embeddedField) {
       // if embedded field exists such as addresses,
       // construct a request body object from the vm's dynamic fields created on the fly
-      return embeddedField
-        ? {
-            [this.fieldsToUpdate[this.indexOfCurrField].field]: [
-              [...this.embeddedFields[embeddedField]].reduce(
-                (acc, { field: next = '' }) => {
-                  acc[next] = self[next].value
-                  return acc
-                },
-                {}
-              ),
-            ],
-          }
-        : { [this.fieldsToUpdate[this.indexOfCurrField].field]: this.value }
+      if (embeddedField) {
+        const updatedField = [...this.embeddedFields[embeddedField]].reduce(
+          (acc, { field: next = '' }) => {
+            acc[next] = this[next]
+            return acc
+          },
+          {}
+        )
+
+        return {
+          [this.fieldsToUpdate[this.indexOfCurrField].field]: [
+            ...this.user[
+              this.fieldsToUpdate[this.indexOfCurrField].field
+            ].slice(0, this.embeddedFieldIndex),
+            updatedField,
+            ...this.user[
+              this.fieldsToUpdate[this.indexOfCurrField].field
+            ].slice(this.embeddedFieldIndex + 1),
+          ],
+        }
+      } else {
+        return {
+          [this.fieldsToUpdate[this.indexOfCurrField].field]: this.value,
+        }
+      }
     },
     async updateUser() {
       try {
+        this.isSaveDisabled = true
         const embeddedField = this.fieldsToUpdate[this.indexOfCurrField]
           .embeddedFields
         const updatedField = this.constructUpdateBody(embeddedField)
@@ -200,8 +278,30 @@ export default {
 
       // update local user for page
       if (embeddedField) {
-        const fields = Object.values(updatedField)[0][this.embeddedFieldIndex]
-        Object.entries(fields).forEach(([key, value]) => {
+        const embeddedFieldsLength = this.user[
+          this.fieldsToUpdate[this.indexOfCurrField].field
+        ].length
+
+        // if adding new address (not updating an existing one)
+        if (this.embeddedFieldIndex === embeddedFieldsLength) {
+          this.user[this.fieldsToUpdate[this.indexOfCurrField].field].push(
+            updatedField[this.fieldsToUpdate[this.indexOfCurrField].field][
+              this.embeddedFieldIndex
+            ]
+          )
+        }
+
+        Object.entries(
+          updatedField[this.fieldsToUpdate[this.indexOfCurrField].field][
+            this.embeddedFieldIndex
+          ]
+        ).forEach(([key, value]) => {
+          if (this.embeddedFieldIndex < embeddedFieldsLength) {
+            this.user[this.fieldsToUpdate[this.indexOfCurrField].field][
+              this.embeddedFieldIndex
+            ][key] = value
+          }
+
           this[key] = value
         })
       } else {
@@ -214,11 +314,10 @@ export default {
         if (!jwt) {
           this.$router.replace('/login')
         }
-        const {
-          data: { addresses = [], ...restOfUser },
-        } = await this.$axios.get('/api/user/me', {
+        const { data: user } = await this.$axios.get('/api/user/me', {
           headers: { Authorization: `Bearer ${jwt}` },
         })
+        const { addresses = [] } = user
 
         const { street1 = '', street2 = '', city = '', state = '', zip = '' } =
           addresses[0] || {}
@@ -227,13 +326,22 @@ export default {
         this.city = city
         this.state = state
         this.zip = zip
-        this.user = restOfUser
+        this.user = user
       } catch (err) {
-        console.log('error', err)
+        const { status } = err.response.data || {}
+        if (status === 401) {
+          this.$router.replace('/login')
+        }
       }
     },
   },
   computed: {
+    accordionElements() {
+      return [
+        ...this.user[this.fieldsToUpdate[this.indexOfCurrField].field],
+        { 'Accordion Text': 'New Address' },
+      ]
+    },
     computedEmbeddedField() {
       return this.fieldsToUpdate[this.indexOfCurrField].embeddedFields
     },
@@ -280,6 +388,8 @@ section.center div.content div.row {
 
 section.left-nav {
   height: 100%;
+  position: fixed;
+  top: 3.1em;
   border-radius: 4px;
   background-color: rgb(223, 219, 219);
   margin-top: 1em;

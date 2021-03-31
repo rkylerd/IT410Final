@@ -1,13 +1,13 @@
 <template>
   <b-form-group
-    :id="`${name}-1`"
+    :id="`${name}-${myKey}`"
     :label="`${labelName}`"
     :label-for="name"
     :invalid-feedback="invalid"
     :state="isValid"
   >
     <b-form-input
-      :id="name"
+      :id="`${name}__${myKey}`"
       v-model="inputVal"
       :state="isValid"
       :type="
@@ -65,6 +65,10 @@ export default {
     }
   },
   props: {
+    myKey: {
+      type: String,
+      default: '1',
+    },
     name: {
       type: String,
       default: 'name',
