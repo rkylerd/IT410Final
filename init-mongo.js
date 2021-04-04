@@ -1,11 +1,11 @@
 db.createUser(
     {
-        user : "caps-secret-admin",
-        pwd  : "caps-secret-admin-pwd",
+        user: "caps-secret-admin",
+        pwd: "caps-secret-admin-pwd",
         roles: [
             {
                 role: "readWrite",
-                db  : "caps-store"
+                db: "caps-store"
             }
         ]
     }
@@ -13,7 +13,6 @@ db.createUser(
 
 // {
 //     "price": 23.90,
-//     "inPersonPickup": false,
 //     "items": [
 //         {
 //             "qty": 1,

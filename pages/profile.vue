@@ -149,6 +149,7 @@ export default {
           {
             field: 'street2',
             label: `Street Address 2`,
+            required: false,
           },
           {
             field: 'city',
@@ -173,14 +174,12 @@ export default {
   },
   async mounted() {
     await this.getUser()
-    this.$root.$on('bv::collapse::state', (collapseId, isJustShown) => {
-      this.watchCollapsed(collapseId, isJustShown)
-    })
+    this.$root.$on('bv::collapse::state', this.watchCollapsed)
   },
   methods: {
     watchCollapsed(collapseId, isJustShown) {
       this.isSaveDisabled = true
-      if (!isJustShown) return
+      if (!isJustShown || !/^accordion-/i.test(collapseId)) return
       this.embeddedFieldIndex = +collapseId.split('-')[1]
 
       const embeddedFieldsLength = (
@@ -188,6 +187,9 @@ export default {
       ).length
       const embeddedField = this.fieldsToUpdate[this.indexOfCurrField]
         .embeddedFields
+
+      if (!embeddedField) return
+
       if (this.embeddedFieldIndex !== embeddedFieldsLength) {
         const arr = [...this.embeddedFields[embeddedField]]
         arr.forEach(({ field = '' }) => {
@@ -204,9 +206,7 @@ export default {
       if (embeddedFieldKey) {
         this.isSaveDisabled = Object.values({
           ...this.embeddedFields[embeddedFieldKey],
-        }).some(({ field: key }) => {
-          return !this[key]
-        })
+        }).some(({ field: key, required = true }) => required && !this[key])
       } else {
         this.isSaveDisabled = !this.value || !this.value.length
       }
@@ -337,10 +337,12 @@ export default {
   },
   computed: {
     accordionElements() {
-      return [
-        ...this.user[this.fieldsToUpdate[this.indexOfCurrField].field],
-        { 'Accordion Text': 'New Address' },
-      ]
+      return Object.keys(this.user).length
+        ? [
+            ...this.user[this.fieldsToUpdate[this.indexOfCurrField].field],
+            { 'Accordion Text': 'New Address' },
+          ]
+        : [{ 'Accordion Text': 'New Address' }]
     },
     computedEmbeddedField() {
       return this.fieldsToUpdate[this.indexOfCurrField].embeddedFields

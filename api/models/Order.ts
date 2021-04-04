@@ -5,7 +5,6 @@ interface Order {
   id: number,
   price: number,
   dateCreated: string,
-  inPersonPickup: boolean,
   expectedArrivalDate: string,
   label: string,
   trackingId: string,

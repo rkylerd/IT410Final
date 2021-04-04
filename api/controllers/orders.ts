@@ -13,10 +13,12 @@ export default function (
             if (await isTokenValid(req, res)) {
                 try {
                     const newOrder = new Order({
-                        ...req.enforcer.body
+                        ...req.enforcer.body,
+                        status: 'pending',
+                        dateCreated: new Date()
                     });
                     await newOrder.save();
-                    res.sendStatus(200);
+                    res.status(200).send({ 'orderId': newOrder._id });
                 } catch (err) {
                     console.log('ERROR---createOrder', err);
                     res.sendStatus(500);

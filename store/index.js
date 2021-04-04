@@ -45,6 +45,9 @@ export const mutations = {
                 addresses: []
             };
     },
+    initializeCart(state, cart) {
+        state.cart = cart;
+    },
     increment(state) {
         state.counter++
     },
@@ -53,8 +56,10 @@ export const mutations = {
         //make sure we don't add something that is already in the cart
         if (state.cart.length != 0) {
             for (let i = 0; i < state.cart.length; i++) {
-                if (state.cart[i].item.name == data.item.name) {
-                    state.cart[i].qty += parseInt(data.qty);
+                if (!state.cart[i]) continue;
+
+                if (state.cart[i].name == data.name) {
+                    state.cart[i].qty += data.qty;
                     return;
                 }
             }
@@ -62,10 +67,10 @@ export const mutations = {
         state.cart.push(data);
         return;
     },
-    removeCart(state, data) {
+    removeCart(state, { itemId = '', size = '' }) {
         //check cart for item and remove it
         for (let i = 0; i < state.cart.length; i++) {
-            if (state.cart[i].item.name == data) {
+            if (state.cart[i]._id === itemId && state.cart[i].size == size) {
                 state.cart.splice(i, 1);
                 break;
             }
@@ -130,6 +135,51 @@ export const actions = {
         }, data.showAlert);
     },
 
+    addCart(context, { item: { _id, name, price, imageUrl, qty, size }, username = '', jwt = '' }) {
+        try {
+            const item = { _id, name, price, imageUrl, qty, size };
+            const options = {
+                headers: {
+                    Authorization: `Bearer: ${jwt}`
+                }
+            };
+
+            this.$axios.post(`/api/cart/${username}`, item, options)
+            context.commit('addCart', item);
+        } catch (err) {
+            console.log('mesage', err.toString())
+        }
+    },
+    removeCart(context, { itemId = '', username = '', jwt = '', size = '' }) {
+        try {
+            const options = {
+                headers: {
+                    Authorization: `Bearer: ${jwt}`
+                }
+            };
+
+            this.$axios.delete(`/api/cart/${username}/${itemId}?size=${size}`, options)
+            context.commit('removeCart', { size, itemId });
+        } catch (err) {
+            console.log('mesage', err.toString())
+        }
+    },
+
+    async submitOrder(context, { order, jwt = '' }) {
+
+        const options = {
+            headers: {
+                Authorization: `Bearer: ${jwt}`
+            }
+        };
+
+        try {
+            const { data: { orderId = '' } } = await this.$axios.post('/api/order', order, options);
+            return orderId;
+        } catch (err) {
+            console.log('error', err)
+        }
+    },
     async getItems(context) {
         try {
             let response = await fetch('http://localhost:3000/api/item');

@@ -23,23 +23,23 @@ export default {
     Footer,
   },
   computed: mapState(['alertMsg', 'showAlert', 'color']),
-
   async beforeCreate() {
     const token = localStorage.getItem('token') || ''
 
     if (token) {
       try {
         const {
-          data: { addresses = [], email, username },
+          data: { addresses = [], email, username, fName, lName, cart = [] },
         } = await this.$axios.get('/api/user/me', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
-        const user = { username, email, addresses }
+        const user = { username, email, addresses, fName, lName }
 
         this.$store.dispatch('setUser', user)
         this.$store.dispatch('setAuth', token)
+        this.$store.commit('initializeCart', cart)
       } catch (err) {
         this.$store.dispatch('setAuth', '')
       }
@@ -120,8 +120,7 @@ div#template {
 
 .footer {
   position: relative;
-    width: 100%;
-    bottom: 0;
+  width: 100%;
+  bottom: 0;
 }
-
 </style>
