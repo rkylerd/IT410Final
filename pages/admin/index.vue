@@ -3,15 +3,15 @@
         <div class="panel">
             <div class="menu">
                 <div class="nav-items">
-                    <h4 class="nav-item">
+                    <h4 class="nav-item" @click="change('inventory')">
                         <img src="~/assets/images/icons/check-list.png" alt="">
                         <span class="nav-title">Inventory</span>
                     </h4>
-                    <h4 class="nav-item">
+                    <h4 class="nav-item" @click="change('orders')">
                         <img src="~/assets/images/icons/box.png" alt="">
                         <span class="nav-title">Orders</span>
                     </h4>
-                    <h4 class="nav-item">
+                    <h4 class="nav-item" @click="change('users')">
                         <img src="~/assets/images/icons/group.png" alt="">
                         <span class="nav-title">Users</span>
                     </h4>
@@ -19,7 +19,9 @@
             </div>
 
             <div class="component">
-
+                <Inventory v-if="selected == 'inventory'" />
+                <Orders v-else-if="selected == 'orders'" />
+                <Users v-else-if="selected == 'users'" />
             </div>
         </div>
     </div>
@@ -27,8 +29,25 @@
 
 
 <script>
+import Inventory from '../../components/inventory/Inventory';
+import Orders from '../../components/orders/Orders';
+import Users from '../../components/users/Users';
 export default {
-    
+    components: {
+        Inventory,
+        Orders,
+        Users,
+    },
+    data() {
+        return {
+            selected: "inventory",
+        }
+    },
+    methods: {
+        change(value) {
+            this.selected = value;
+        }
+    }
 }
 </script>
 
@@ -45,6 +64,10 @@ export default {
     background-color: #114b5f;
     height: 100vh;
     position: relative;
+}
+
+.component {
+    flex-basis: 85%;
 }
 
 .nav-items {
@@ -77,6 +100,10 @@ export default {
     .menu {
         flex-basis: 18%;
     }
+
+    .component {
+    flex-basis: 82%;
+}
 }
 
 @media only screen and (max-width: 1200px) {
