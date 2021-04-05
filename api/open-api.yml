@@ -220,6 +220,35 @@ paths:
           description: "User does not have permission to access this resource"
         "500":
           description: "Internal Server Error"
+  /api/item/bypage:
+    post:
+      tags:
+        - "item"
+      summary: "gets items by page"
+      description: ""
+      operationId: "getItemsByPage"
+      x-controller: items
+      x-operation: getItemsByPage
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: "#/components/schemas/Page"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "400":
+          description: "Invalid ID supplied"
+        "401":
+          description: "Must authenticate"
+        "404":
+          description: "Item not found"
   /api/order:
     get:
       tags:
@@ -828,6 +857,13 @@ components:
             type: string
           type: 
             type: string
+      Page:
+        type: object
+        properties:
+          page:
+            type: number
+          limit:
+            type: number
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"

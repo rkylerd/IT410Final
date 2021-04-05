@@ -60,6 +60,28 @@ export default function (
             }
 
         },
+        async getItemsByPage(req: Request, res: Response) {
+            try {
+                const pageNum = req.enforcer.body.page;
+                const limit = req.enforcer.body.limit;
+                const id = req.enforcer.body.id;
+                let skips = limit * (pageNum - 1);
+                let item = [];
+                if (pageNum > 1) {
+                    console.log(id);
+                    item = await Item.find().skip(skips).limit(limit)
+                } else {
+                    item = await Item.find().limit(limit);
+                }
+                if (item) {
+                    res.status(200).send(item);
+                }
+                res.status(404).send(new Error(`Items could not be found.`, 404));
+            } catch (err) {
+                console.log('ERROR---getItemsByPage', err);
+                res.sendStatus(500);
+            }
+        },
         async deleteItem(req: Request, res: Response) {
             if (await isTokenValid(req, res, undefined, true)) {
                 try {

@@ -1,6 +1,6 @@
 export default function (mongoose: any) {
     const itemSchema = new mongoose.Schema({
-        _id: Number,
+        _id: String,
         name: String,
         price: Number,
         category: String,
