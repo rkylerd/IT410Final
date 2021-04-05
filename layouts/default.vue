@@ -119,7 +119,7 @@ div#template {
 }
 
 .footer {
-  position: relative;
+    position: relative;
     width: 100%;
     bottom: 0;
 }

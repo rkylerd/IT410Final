@@ -111,6 +111,10 @@ export const getters = {
 
     cart(state) {
         return state.cart;
+    },
+
+    user(state) {
+        return state.user;
     }
 }
 

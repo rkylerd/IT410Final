@@ -366,6 +366,11 @@ export default {
 </script>
 
 <style>
+
+.page {
+  min-height: 100vh;
+}
+
 div.flex {
   display: flex;
   flex-wrap: nowrap;
