@@ -127,8 +127,7 @@
         "state": "string",
         "zip": "number"
     },
-    "userId": "string",
-    "inPersonPickUp": "boolean"
+    "userId": "string"
 }
 
 // get order
@@ -136,7 +135,6 @@
     "id": "string",
     "price": "number",
     "dateCreated": "string",
-    "inPersonPickUp": "boolean",
     "expectedArrivalDate": "string",
     "label": "string",
     "trackingId": "string",

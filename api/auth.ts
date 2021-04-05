@@ -52,7 +52,7 @@ const isTokenValid = async (req: Request, res: Response, username: string = "", 
         const { username: jwtUsername = "", role = "" } = await verifyToken(req, res);
         if (username && username !== jwtUsername) throw Error("JWT belongs to another user.");
         if (mustBeAdmin && role !== "ADMIN") {
-            res.status(403).enforcer.send(new CustomError("Unauthorized to perform that action.", 403));
+            res.status(403).send(new CustomError("Unauthorized to perform that action.", 403));
             return false;
         }
         return true;

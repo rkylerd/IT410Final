@@ -386,9 +386,9 @@ paths:
           content:
             application/json:
               schema:
-                type: "array"
-                items:
-                  $ref: "#/components/schemas/Order"
+                type: array
+                items:    
+                  $ref: '#/components/schemas/Order'
         "400":
           description: "Invalid status value"
         "401":
@@ -530,6 +530,11 @@ paths:
         description: "Quantity of the item to remove"
         schema:
           type: number
+      - name: "size"
+        in: "query"
+        description: "Size of the item to remove"
+        schema:
+          type: string
       responses:
         "400":
           description: "Invalid username supplied"
@@ -761,11 +766,14 @@ components:
               items:    
                 allOf:
                   - $ref: '#/components/schemas/Address'
+            cart:
+              type: array
+              items:    
+                $ref: '#/components/schemas/CartItem'
       Item:
           properties:
             _id:
               type: string
-              readOnly: true
             name:
               type: string
             price:
@@ -799,8 +807,6 @@ components:
           dateCreated:
             type: string
             readOnly: true
-          inPersonPickup:
-            type: boolean
           expectedArrivalDate:
             type: string
             readOnly: true
@@ -817,8 +823,8 @@ components:
           status:
             type: string
             readOnly: true
-          # address:
-          #     $ref: '#/components/schemas/Address'
+          address:
+              $ref: '#/components/schemas/Address'
           username:
             type: string
       CartItem:

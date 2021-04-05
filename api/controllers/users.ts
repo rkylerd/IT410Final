@@ -218,11 +218,25 @@ export default function (
                     }
 
                     if (isTokenMine(req, res, user)) {
+
                         const {
-                            item
+                            imageUrl,
+                            name,
+                            price,
+                            qty,
+                            size,
+                            _id
                         } = req.enforcer.body;
 
-                        user.cart.push(item);
+                        const itemIndex = user.cart.findIndex((item: CartItem) =>
+                            item && item._id === _id && item.size === size
+                        );
+
+                        if (itemIndex > -1) {
+                            user.cart[itemIndex].qty += qty;
+                        } else {
+                            user.cart.push({ _id, imageUrl, name, price, qty, size });
+                        }
 
                         await user.save();
                         res.sendStatus(204);
@@ -234,7 +248,8 @@ export default function (
             }
         },
         async removeFromUserCart(req: Request, res: Response) {
-            const { username = "", itemId = "", qty } = req.enforcer.params;
+            const { username = "", itemId = "" } = req.enforcer.params;
+            const { qty, size = '' } = req.enforcer.query;
             if (await isTokenValid(req, res, username)) {
                 try {
                     let user = await User.findOne({ username });
@@ -245,9 +260,9 @@ export default function (
 
                     if (isTokenMine(req, res, user)) {
 
-                        const itemIndex = user.cart.findIndex((item: CartItem) => {
-                            item._id === itemId
-                        });
+                        const itemIndex = user.cart.findIndex((item: CartItem) =>
+                            item && item._id === itemId && item.size === size
+                        );
 
                         if (itemIndex !== -1) {
                             if (qty && user.cart[itemIndex].qty > qty) {
