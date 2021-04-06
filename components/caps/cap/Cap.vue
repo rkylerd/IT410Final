@@ -10,7 +10,7 @@
       </template>
     </vue-flip>
     </client-only>
-    <Bottom :cap="cap" />
+    <Bottom v-if="this.$route.path != '/admin'" :cap="cap" />
   </div>
 </template>
 

@@ -46,6 +46,15 @@ export default function (
                 res.sendStatus(500);
             }
         },
+        async itemCount(req: Request, res: Response) {
+            try {
+                let count = await Item.count();
+                res.status(200).send({count: count});
+            } catch (err) {
+                console.log('ERROR---itemCount', err);
+                res.sendStatus(500);
+            }
+        },
         async getItemById(req: Request, res: Response) {
             try {
                 const itemId = req.enforcer.params.itemId;
@@ -62,13 +71,11 @@ export default function (
         },
         async getItemsByPage(req: Request, res: Response) {
             try {
-                const pageNum = req.enforcer.body.page;
-                const limit = req.enforcer.body.limit;
-                const id = req.enforcer.body.id;
+                const pageNum = parseInt(req.enforcer.query.page);
+                const limit = parseInt(req.enforcer.query.size);
                 let skips = limit * (pageNum - 1);
                 let item = [];
                 if (pageNum > 1) {
-                    console.log(id);
                     item = await Item.find().skip(skips).limit(limit)
                 } else {
                     item = await Item.find().limit(limit);

@@ -26,6 +26,7 @@ export const state = () => ({
     category: "all",
     searchText: "",
     caps: [],
+    inventory: [],
 })
 
 export const mutations = {
@@ -92,6 +93,9 @@ export const mutations = {
     },
     setSearchText(state, data) {
         state.searchText = data;
+    },
+    setInventory(state, data) {
+        state.inventory = data;
     }
 }
 
@@ -120,7 +124,11 @@ export const getters = {
 
     user(state) {
         return state.user;
-    }
+    },
+
+    inventory(state) {
+        return state.inventory;
+    },
 }
 
 export const actions = {
@@ -194,11 +202,39 @@ export const actions = {
         }
     },
 
+    async getInventory(context, data) {
+        try {
+            const response = await this.$axios.get('/api/item/bypage?page='+data.page+'&size='+data.size);
+            context.commit('setInventory', response.data);
+            return response.data;
+        } catch (err) {
+            console.log(err);
+            return err.response;
+        }
+    },
+
+    async inventoryCount(context) {
+        try {
+            const response = await this.$axios.get('api/item/count');
+            return response.data;
+        } catch (err) {
+            console.log(err);
+            return err.response;
+        }
+    },
 
     async orders(context) {
         try {
             let response = await axios.get('/api/order');
             console.log(response);
+        } catch (err) {
+            console.log(err.response);
+        }
+    },
+
+    async updateItem(context, data) {
+        try {
+            await this.$axios.put('/api/item/'+data._id, data.data);
         } catch (err) {
             console.log(err.response);
         }

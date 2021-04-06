@@ -220,35 +220,57 @@ paths:
           description: "User does not have permission to access this resource"
         "500":
           description: "Internal Server Error"
-  /api/item/bypage:
-    post:
+  /api/item/count:
+    get:
       tags:
-        - "item"
-      summary: "gets items by page"
+      - "item"
+      summary: "get number of items"
       description: ""
-      operationId: "getItemsByPage"
+      operationId: "itemCount"
       x-controller: items
-      x-operation: getItemsByPage
+      x-operation: itemCount
       security:
         - bearerAuth: []
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              $ref: "#/components/schemas/Page"
       responses:
         "200":
           description: "successful operation"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Item"
-        "400":
-          description: "Invalid ID supplied"
-        "401":
-          description: "Must authenticate"
-        "404":
-          description: "Item not found"
+                type: number
+        "500":
+          description: "Internal Server Error"
+  /api/item/bypage:
+    get:
+      tags:
+      - "item"
+      summary: "gets items per page"
+      description: ""
+      operationId: "getItemsByPage"
+      x-controller: items
+      x-operation: getItemsByPage
+      parameters:
+      - name: "page"
+        in: "query"
+        description: "page number to get"
+        schema:
+          type: string
+      - name: "size"
+        in: "query"
+        description: "number of rows per page"
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:    
+                  $ref: '#/components/schemas/Item'
+        "500":
+          description: "Internal Server Error"
   /api/order:
     get:
       tags:
