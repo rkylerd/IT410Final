@@ -37,9 +37,9 @@
         <b-navbar-nav class="ml-auto">
           <nuxt-link to="/cart">
             <div class="icon-cart">
-            <img src="~/assets/images/icons/cart.png" alt="">
-            <p class="cart-cnt">{{this.$store.getters['cart'].length}}</p>
-          </div>
+              <img src="~/assets/images/icons/cart.png" alt="" />
+              <p class="cart-cnt">{{ this.$store.getters['cart'].length }}</p>
+            </div>
           </nuxt-link>
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
@@ -47,9 +47,7 @@
               <em>User</em>
             </template>
             <template v-if="user.username">
-              <b-dropdown-item href="#"
-                ><nuxt-link to="/cart">Cart</nuxt-link></b-dropdown-item
-              >
+              <b-dropdown-item href="/cart">Cart</b-dropdown-item>
               <b-dropdown-item href="/profile">Profile</b-dropdown-item>
               <b-dropdown-item href="#" @click="logout"
                 >Sign Out</b-dropdown-item
@@ -88,6 +86,7 @@ export default Vue.extend({
         )
         this.$store.dispatch('setAuth', '')
         this.$store.dispatch('setUser', undefined)
+        this.$store.commit('initializeCart', [])
         this.$router.replace('/login')
       } catch (err) {
         console.log(err.response.data)
@@ -99,7 +98,6 @@ export default Vue.extend({
 
 
 <style scoped>
-
 .content {
   position: fixed;
   top: 0;
@@ -111,7 +109,7 @@ export default Vue.extend({
   background-color: #fff;
   width: fit-content;
   border-radius: 40px;
-  padding: .9rem;
+  padding: 0.9rem;
   cursor: pointer;
   position: relative;
 }
@@ -125,5 +123,4 @@ export default Vue.extend({
   font-weight: 600;
   font-size: 1rem;
 }
-
 </style>

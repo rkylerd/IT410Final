@@ -56,20 +56,25 @@ export default {
   methods: {
     async login() {
       try {
-        const user = {
-          username: this.username,
-          password: this.password,
-        }
-
         const {
           headers: { authorization: auth = 'Bearer ' } = {},
-        } = await this.$axios.put('/api/user/login', user)
+        } = await this.$axios.put('/api/user/login', {
+          username: this.username,
+          password: this.password,
+        })
 
         const jwt = auth.split(' ')[1] || ''
         if (jwt) {
+          const { data: { cart = [], ...user } = {} } = await this.$axios.get(
+            '/api/user/me',
+            {
+              headers: { Authorization: `Bearer ${jwt}` },
+            }
+          )
           this.$store.dispatch('setAuth', jwt)
           this.$store.dispatch('setUser', user)
-          this.$router.push({ path: '/' })
+          this.$store.commit('initializeCart', cart)
+          this.$router.push({ path: this.$store.state.redirectUrl })
         }
       } catch (err) {
         const {

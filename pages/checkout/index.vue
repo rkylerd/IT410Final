@@ -34,7 +34,7 @@
           ></b-form-input>
           <h3 class="form-label">Shipping Address</h3>
           <b-form-radio
-            v-for="(address, idx) in user.addresses"
+            v-for="(address, idx) in computedAddresses"
             :key="`address ${idx}`"
             @change="
               canShip = false
@@ -63,10 +63,10 @@
             class="contact-in"
             aria-describedby="New one-time address"
             name="New address"
-            :value="user.addresses.length"
+            :value="computedAddresses.length"
             >Use a one-time address</b-form-radio
           >
-          <template v-if="addressIdx === user.addresses.length">
+          <template v-if="addressIdx === computedAddresses.length">
             <b-form-input
               required
               class="contact-in"
@@ -138,7 +138,11 @@
             >Place Order</b-button
           >
         </div>
-        <h2 v-if="orderId">Order id: {{ orderId }}</h2>
+        <h2 v-if="orderId" class="order-conf">
+          <img src="~/assets/images/checkmark.png" alt="checkmark" />Thanks for
+          placing an order, {{ fName }}! <br />
+          <span>Id: {{ orderId }}</span>
+        </h2>
       </div>
     </div>
   </div>
@@ -203,6 +207,8 @@ export default {
       return `<Address1>${street1}</Address1><Address2>${street2}</Address2><City>${city}</City><State>${state}</State><Zip5>${zip}</Zip5>`
     },
     getShipping() {
+      if (this.computedAddresses.length === 0) return
+
       this.loading = true
       let shippingAddress = ''
       try {
@@ -265,7 +271,7 @@ export default {
       try {
         const jwt = this.$store.state.jwt || localStorage.getItem('token') || ''
         if (!jwt) {
-          this.$router.replace('/login')
+          return
         }
         const {
           data: { fName = '', lName = '', phone = '', email = '' },
@@ -347,6 +353,14 @@ export default {
             color: 'warning',
           })
         })
+    },
+  },
+  computed: {
+    computedAddresses() {
+      return this.$store.state.user.addresses.length &&
+        this.$store.state.user.addresses[0].street1
+        ? this.$store.state.user.addresses
+        : []
     },
   },
 }
@@ -444,14 +458,29 @@ export default {
   margin: 1em;
 }
 
+.order-conf {
+  font-size: 21px;
+}
+.order-conf img {
+  max-width: 50px;
+}
+
+.order-conf span {
+  padding-left: 50px;
+}
+
 @media only screen and (max-width: 725px) {
   .form-content {
     flex-direction: column;
+    justify-content: center;
   }
 
   .contact {
-    order: 2;
-    margin-top: 5rem;
+    border-right: none;
+  }
+
+  h3.form-label {
+    margin-top: 1em;
   }
 }
 </style>

@@ -76,7 +76,7 @@ export default {
         if (jwt) {
           this.$store.dispatch('setAuth', jwt)
           this.$store.dispatch('setUser', user)
-          this.$router.push({ path: '/' })
+          this.$router.push({ path: this.$store.state.redirectUrl })
         }
       } catch (err) {
         const {

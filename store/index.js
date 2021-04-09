@@ -22,7 +22,7 @@ export const state = () => ({
     showAlert: 0,
     color: "",
     cart: [],
-    loginRedirectUrl: '',
+    redirectUrl: '/',
     category: "all",
     searchText: "",
     caps: [],
@@ -150,13 +150,15 @@ export const actions = {
     addCart(context, { item: { _id, name, price, imageUrl, qty, size }, username = '', jwt = '' }) {
         try {
             const item = { _id, name, price, imageUrl, qty, size };
-            const options = {
-                headers: {
-                    Authorization: `Bearer: ${jwt}`
-                }
-            };
+            if (jwt) {
+                const options = {
+                    headers: {
+                        Authorization: `Bearer: ${jwt}`
+                    }
+                };
 
-            this.$axios.post(`/api/cart/${username}`, item, options)
+                this.$axios.post(`/api/cart/${username}`, item, options)
+            }
             context.commit('addCart', item);
         } catch (err) {
             console.log('mesage', err.toString())
@@ -194,7 +196,7 @@ export const actions = {
     },
     async getItems(context) {
         try {
-            let response = await fetch('http://localhost:3000/api/item');
+            let response = await fetch('/api/item');
             let json = await response.json()
             context.commit('setCaps', json);
         } catch (err) {
@@ -204,7 +206,7 @@ export const actions = {
 
     async getInventory(context, data) {
         try {
-            const response = await this.$axios.get('/api/item/bypage?page='+data.page+'&size='+data.size);
+            const response = await this.$axios.get('/api/item/bypage?page=' + data.page + '&size=' + data.size);
             context.commit('setInventory', response.data);
             return response.data;
         } catch (err) {
@@ -234,7 +236,7 @@ export const actions = {
 
     async updateItem(context, data) {
         try {
-            await this.$axios.put('/api/item/'+data._id, data.data);
+            await this.$axios.put('/api/item/' + data._id, data.data);
         } catch (err) {
             console.log(err.response);
         }
